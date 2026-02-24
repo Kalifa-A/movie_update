@@ -15,10 +15,9 @@ export default function MovieDetail() {
 
   const API_KEY = import.meta.env.VITE_API_ID
 const addToWatchlist = async () => {
+  if (!movie || isAdding) return;
   const token = localStorage.getItem('token');
-  
-  // 1. Get the URL from environment variables, or use localhost if VITE_API_URL isn't set
-  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  console.log("Token being sent:", token); // If this is null, you aren't logged in!
 
   if (!token) {
     alert("Please login first!");
@@ -34,9 +33,8 @@ const addToWatchlist = async () => {
       vote_average: movie.vote_average
     };
 
-    // 2. Use the dynamic variable here
     const response = await axios.post(
-      `${API_BASE}/watchlist`, 
+      'http://localhost:5000/api/watchlist', 
       movieData, 
       {
         headers: { 'x-auth-token': token } 
@@ -47,9 +45,10 @@ const addToWatchlist = async () => {
       alert("Added to Watchlist!");
     }
   } catch (err) {
-    console.error("Error Response:", err.response?.data);
+    console.log("Error Response:", err.response?.data);
     alert(err.response?.data?.message || "Error adding movie");
   }
+  setIsAdding(false);
 };
 
   useEffect(() => {
@@ -239,7 +238,4 @@ const addToWatchlist = async () => {
       </div>
     </div>
   )
-
 }
-
-
