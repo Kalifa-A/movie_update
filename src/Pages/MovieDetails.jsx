@@ -34,7 +34,7 @@ const addToWatchlist = async () => {
     };
 
     const response = await axios.post(
-      'http://localhost:5000/api/watchlist', 
+      'https://movie-backend-eight.vercel.app/api/watchlist', 
       movieData, 
       {
         headers: { 'x-auth-token': token } 
@@ -239,3 +239,4 @@ const addToWatchlist = async () => {
     </div>
   )
 }
+
