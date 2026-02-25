@@ -12,7 +12,7 @@ export default function Auth() {
     const endpoint = isLogin ? 'login' : 'register';
     
     try {
-      const res = await axios.post(`http://localhost:5000/api/auth/${endpoint}`, formData);
+      const res = await axios.post(`https://movie-backend-psi.vercel.app/api/auth/${endpoint}`, formData);
       
       if (isLogin) {
         // 1. Save credentials to local storage
@@ -91,4 +91,5 @@ export default function Auth() {
       </div>
     </div>
   );
+
 }
