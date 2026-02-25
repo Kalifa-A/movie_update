@@ -20,7 +20,7 @@ export default function Watchlist() {
     // 2. If token exists, fetch THEIR movies
     const fetchWatchlist = async () => {
       try {
-        const res = await axios.get('https://movie-backend-eight.vercel.app/api/watchlist', {
+        const res = await axios.get('https://movie-backend-psi.vercel.app/api/watchlist', {
           headers: { 'x-auth-token': token } 
         });
         setMovies(res.data);
@@ -116,5 +116,6 @@ export default function Watchlist() {
 }
 
 export { Watchlist };
+
 
 
