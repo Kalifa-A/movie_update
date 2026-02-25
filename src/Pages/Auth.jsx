@@ -11,32 +11,26 @@ export default function Auth() {
     e.preventDefault();
     const endpoint = isLogin ? 'login' : 'register';
     
+    // 1. DYNAMIC URL: Uses Vercel variable if online, localhost if offline
+    const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    
     try {
-      const res = await axios.post(`https://movie-backend-psi.vercel.app/api/auth/${endpoint}`, formData);
+      // 2. USE THE VARIABLE HERE
+      const res = await axios.post(`${API_BASE}/auth/${endpoint}`, formData);
       
       if (isLogin) {
-        // 1. Save credentials to local storage
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('username', res.data.username);
-        
-        // 2. Alert the user (Optional but nice)
-        console.log("Login successful!");
-        
-        // 3. YOUR REQUIREMENT: Redirect directly to watchlist after login
         navigate('/watchlist');
-        
-        // Force a page refresh or custom event if your Navbar needs to update immediately
         window.dispatchEvent(new Event("storage")); 
       } else {
-        // If they just registered, switch them to the login view
         alert("Account created! Now please sign in.");
         setIsLogin(true);
       }
     } catch (err) {
-      alert(err.response?.data?.error || "Authentication failed. Please try again.");
+      alert(err.response?.data?.error || "Authentication failed.");
     }
   };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f5f5f7] px-6">
       <div className="w-full max-w-md bg-white/80 backdrop-blur-2xl p-10 rounded-[2.5rem] shadow-2xl border border-white">
@@ -93,3 +87,4 @@ export default function Auth() {
   );
 
 }
+
