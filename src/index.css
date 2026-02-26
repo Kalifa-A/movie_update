@@ -1,1 +1,43 @@
 @import "tailwindcss";
+
+@keyframes siri-liquid-wide {
+  0% { transform: rotate(0deg) scale(1.1); }
+  50% { transform: rotate(180deg) scale(1.4); }
+  100% { transform: rotate(360deg) scale(1.1); }
+}
+
+.animate-siri-liquid {
+  background: conic-gradient(
+    from 0deg,
+    #6366f1, /* Indigo 600 */
+    #a5b4fc, /* Indigo 300 */
+    #ffffff, /* White */
+    #22d3ee, /* Cyan 400 */
+    #6366f1  /* Back to Indigo */
+  );
+  /* Deep blur for that corner-bleed effect */
+  filter: blur(90px); 
+  animation: siri-liquid-wide 10s linear infinite;
+}
+
+/* this for delete glow button*/
+@media (max-width: 768px) {
+  .mobile-delete-glow {
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+  }
+}
+/* this for watchtrailer button */
+.hover-glow-indigo:hover {
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.4), 0 0 40px rgba(99, 102, 241, 0.2);
+}
+/* This for watchlist button */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.group-hover\:animate-shimmer {
+  animation: shimmer 1.5s infinite;
+}
