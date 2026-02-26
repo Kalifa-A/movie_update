@@ -117,182 +117,157 @@ const getTrailer = async (id) => {
   const poster = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : null
 
 return (
-  <div className="min-h-screen bg-[#fbfbfd] text-gray-900 overflow-x-hidden font-sans">
-    {/* Background Hero Section */}
-    <div className="relative h-[65vh] w-full overflow-hidden">
+  <div className="min-h-screen bg-[#fbfbfd] text-gray-900 overflow-x-hidden font-sans pb-20 md:pb-0">
+    
+    {/* 1. HERO BACKDROP SECTION */}
+    <div className="relative h-[60vh] md:h-[65vh] w-full overflow-hidden">
       {backdrop && (
         <>
-          <img 
-            src={backdrop} 
-            alt="backdrop" 
-            className="absolute inset-0 w-full h-full object-cover scale-105 animate-slow-zoom"
+          <img
+            src={backdrop}
+            alt="backdrop"
+            className="absolute inset-0 w-full h-full object-cover scale-110 md:scale-105 animate-slow-zoom"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#fbfbfd] via-transparent to-black/40" />
+          {/* Mobile-optimized gradient bleed */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#fbfbfd] via-[#fbfbfd]/40 md:via-transparent to-black/40" />
         </>
       )}
     </div>
 
-    <div className="max-w-6xl mx-auto px-6 -mt-48 relative z-10 pb-20">
-      <div className="flex flex-col md:flex-row gap-12 items-start mb-20">
-        
-        {/* Floating Poster Card */}
-        <div className="w-full md:w-1/3 shrink-0">
+    {/* 2. MAIN CONTENT CONTAINER */}
+    <div className="max-w-6xl mx-auto px-6 -mt-32 md:-mt-48 relative z-10">
+      
+      {/* MOVIE DETAILS SECTION */}
+      <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-start mb-20">
+
+        {/* Desktop-Only Floating Poster */}
+        <div className="hidden md:block w-1/3 shrink-0">
           <div className="rounded-[3rem] overflow-hidden shadow-[0_40px_80px_-15px_rgba(0,0,0,0.35)] border border-white/20">
             <img src={poster} alt={movie.title} className="w-full h-auto" />
           </div>
         </div>
 
-        {/* Details Glass Card */}
-        <div className="flex-1 pt-10">
-          <div className="backdrop-blur-2xl bg-white/70 p-8 md:p-12 rounded-[3.5rem] border border-white/40 shadow-[0_8px_32px_rgba(0,0,0,0.04)]">
-            <div className="flex flex-wrap items-center gap-3 mb-6">
+        {/* DETAILS: Transparent on Mobile, Glass Card on Desktop */}
+        <div className="flex-1 w-full pt-0 md:pt-10">
+          <div className="md:backdrop-blur-2xl md:bg-white/70 p-0 md:p-12 rounded-[3.5rem] md:border md:border-white/40 md:shadow-[0_8px_32px_rgba(0,0,0,0.04)]">
+
+            {/* Genres */}
+            <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-6">
               {movie.genres?.map(g => (
-                <span key={g.id} className="px-4 py-1.5 bg-indigo-50/50 text-indigo-600 text-[10px] font-extrabold rounded-full tracking-widest uppercase border border-indigo-100/50">
+                <span
+                  key={g.id}
+                  className="px-3 md:px-4 py-1.5 bg-indigo-50/50 text-indigo-600 text-[9px] md:text-[10px] font-extrabold rounded-full tracking-widest uppercase border border-indigo-100/50"
+                >
                   {g.name}
                 </span>
               ))}
             </div>
 
-            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tighter mb-8 text-gray-900 leading-[1.1]">
+            {/* Title */}
+            <h1 className="text-4xl md:text-7xl font-black tracking-tighter mb-6 md:mb-8 leading-[1.1]">
               {movie.title}
             </h1>
 
-            <div className="flex items-center gap-8 mb-10 text-lg font-semibold">
+            {/* Stats */}
+            <div className="flex items-center gap-4 md:gap-8 mb-10 text-sm md:text-lg font-semibold">
               <div className="flex items-center gap-2.5">
-                <img src={star} alt="star" className="w-6 h-6" />
-                <span>{movie.vote_average.toFixed(1)} <span className="text-gray-400 font-medium">/ 10</span></span>
+                <img src={star} alt="star" className="w-5 h-5 md:w-6 md:h-6" />
+                <span>
+                  {movie.vote_average.toFixed(1)}
+                  <span className="text-gray-400 font-medium"> / 10</span>
+                </span>
               </div>
-              <div className="h-5 w-[1px] bg-gray-300" />
-              <span className="text-gray-600 font-medium">{movie.runtime} min</span>
-              <div className="h-5 w-[1px] bg-gray-300" />
-              <span className="text-gray-600 font-medium">{new Date(movie.release_date).getFullYear()}</span>
+              <div className="h-4 w-[1px] bg-gray-300" />
+              <span>{movie.runtime} min</span>
+              <div className="h-4 w-[1px] bg-gray-300" />
+              <span>{new Date(movie.release_date).getFullYear()}</span>
             </div>
 
-            <h3 className="text-xl font-bold mb-4 text-gray-900">Overview</h3>
-            <p className="text-gray-500 leading-relaxed text-xl font-medium mb-12 max-w-2xl">{movie.overview}</p>
+            {/* Overview */}
+            <h3 className="text-xl font-bold mb-4">Overview</h3>
+            <p className="text-gray-500 leading-relaxed text-lg md:text-xl font-medium mb-12 max-w-2xl">
+              {movie.overview}
+            </p>
 
-            {/* Cast Grid */}
-            <h3 className="text-xl font-bold mb-8 text-gray-900 tracking-tight">Top Cast</h3>
-            <div className="flex gap-6 overflow-x-auto pb-8 scrollbar-hide">
-              {cast.map((person) => (
-                <div key={person.id} className="text-center shrink-0 group">
-                  <div className="w-20 h-20 mx-auto mb-3 rounded-full overflow-hidden shadow-lg border-2 border-white transition-all duration-500 group-hover:scale-110 group-hover:shadow-indigo-200">
-                    <img 
-                      src={person.profile_path ? `https://image.tmdb.org/t/p/w200${person.profile_path}` : 'https://via.placeholder.com/200?text=N/A'} 
-                      className="w-full h-full object-cover"
-                      alt={person.name}
-                    />
-                  </div>
-                  <p className="text-[11px] font-bold text-gray-900 w-24 truncate">{person.name}</p>
+            {/* DESKTOP-ONLY BUTTONS */}
+            <div className="hidden md:flex items-center gap-5 mt-4">
+              <button 
+                onClick={() => getTrailer(movie.id)}
+                className="group flex items-center gap-4 px-8 py-5 bg-white/10 backdrop-blur-2xl border border-white/20 text-black font-bold rounded-[2.2rem] hover:bg-white transition-all duration-500 shadow-2xl active:scale-95"
+              >
+                <div className="w-10 h-10 flex items-center justify-center bg-transparent rounded-full transition-transform duration-500 group-hover:rotate-[360deg]">
+                  <img src={play} alt="play" className="w-full h-full object-contain" />
                 </div>
-              ))}
-            </div>
+                <span className="tracking-tight text-lg uppercase font-black">Watch Trailer</span>
+              </button>
 
-            {/* ACTION BUTTONS: Apple Style */}
-            <div className="flex flex-wrap gap-5 mt-4">
-              {/* Liquid Trailer Button */}
               <button 
-  onClick={() => getTrailer(movie.id)}
-  className="group flex items-center gap-4 px-8 py-5 
-             /* Glassmorphism Base */
-             bg-white/10 backdrop-blur-2xl border border-white/20 
-             text-black font-bold rounded-[2.2rem] 
-             /* Liquid Hover Effect */
-             hover:bg-white hover:text-black hover:shadow-[0_20px_40px_rgba(255,255,255,0.1)]
-             transition-all duration-500 active:scale-95 shadow-2xl"
->
-  {/* The Play Icon Container */}
-  <div className="w-10 h-10 flex items-center justify-center 
-                  bg-transparent rounded-full overflow-hidden 
-                  transition-transform duration-500 group-hover:scale-110 group-hover:rotate-[360deg]">
-    <img 
-      src={play} 
-      alt="play icon" 
-      className="w-full h-full object-contain filter drop-shadow-md" 
-    />
-  </div>
-
-  <span className="tracking-tight text-lg font-extrabold uppercase tracking-widest">
-    Watch Trailer
-  </span>
-</button>
-
-              {/* Watchlist Button */}
-              <button 
-  disabled={isAdding}
-  onClick={addToWatchlist}
-  className={`relative group px-10 py-5 font-extrabold rounded-[2.2rem] text-lg transition-all duration-500 active:scale-95 overflow-hidden
-    ${isAdding 
-      ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-      : 'bg-indigo-600 text-white shadow-[0_20px_40px_rgba(79,70,229,0.3)] hover:shadow-[0_25px_50px_rgba(79,70,229,0.5)] hover:-translate-y-1'
-    }`}
->
-  {/* The "Liquid" Shine Effect on Hover */}
-  {!isAdding && (
-    <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-shimmer" />
-  )}
-
-  <span className="relative flex items-center justify-center gap-2 tracking-tight">
-    {isAdding ? (
-      <>
-        <div className="w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
-        Adding...
-      </>
-    ) : (
-      <>
-        <span className="text-2xl font-light leading-none mb-1">+</span>
-        Add to Watchlist
-      </>
-    )}
-  </span>
-</button>
+                disabled={isAdding}
+                onClick={addToWatchlist}
+                className={`px-10 py-5 font-extrabold rounded-[2.2rem] text-lg transition-all active:scale-95 shadow-lg ${
+                  isAdding ? 'bg-gray-100 text-gray-400' : 'bg-indigo-600 text-white hover:bg-indigo-700'
+                }`}
+              >
+                {isAdding ? "Adding..." : "+ Watchlist"}
+              </button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* RELATED MOVIES SECTION */}
-      <div className="mt-32">
-        <header className="mb-12 flex items-center justify-between">
-          <h2 className="text-4xl font-extrabold text-gray-900 tracking-tighter">
+      {/* MOBILE STICKY BOTTOM BAR */}
+      <div className="fixed bottom-0 left-0 right-0 p-6 bg-white/80 backdrop-blur-3xl border-t border-gray-100 flex gap-3 z-50 md:hidden">
+        <button 
+          onClick={() => getTrailer(movie.id)}
+          className="flex-1 flex items-center justify-center gap-2 py-4 bg-black text-white rounded-2xl font-bold active:scale-95"
+        >
+          <img src={play} className="w-5 h-5 invert" alt="play" /> Trailer
+        </button>
+        <button 
+          onClick={addToWatchlist}
+          disabled={isAdding}
+          className="flex-1 py-4 bg-indigo-600 text-white rounded-2xl font-bold active:scale-95"
+        >
+          {isAdding ? "Adding..." : "+ Watchlist"}
+        </button>
+      </div>
+
+      {/* RELATED MOVIES SECTION: Mobile Horizontal Scroll */}
+      <div className="mt-12 md:mt-32">
+        <header className="mb-8 md:mb-12 flex items-center justify-between">
+          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tighter">
             Related <span className="text-indigo-600">Movies.</span>
           </h2>
+          <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 md:hidden">Swipe →</span>
         </header>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div className="flex overflow-x-auto md:grid md:grid-cols-4 lg:grid-cols-5 gap-6 md:gap-10 pb-10 scrollbar-hide snap-x snap-mandatory px-2 md:px-0">
           {related.map((m) => {
-            const relatedPoster = m.poster_path 
-              ? `https://image.tmdb.org/t/p/w500${m.poster_path}` 
+            const relatedPoster = m.poster_path
+              ? `https://image.tmdb.org/t/p/w500${m.poster_path}`
               : 'https://via.placeholder.com/500x750?text=No+Image';
 
             return (
-              <div 
-                key={m.id} 
+              <div
+                key={m.id}
                 onClick={() => {
                   navigate(`/movie/${m.id}`);
-                  window.scrollTo(0, 0);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className="group cursor-pointer"
+                className="min-w-[70%] sm:min-w-[40%] md:min-w-full snap-start group cursor-pointer"
               >
-                <div className="relative aspect-[2/3] rounded-[2.5rem] overflow-hidden mb-5 shadow-sm border border-gray-100 transition-all duration-700 hover:shadow-[0_32px_64px_rgba(0,0,0,0.15)] hover:-translate-y-3">
-                  <img 
-                    src={relatedPoster} 
+                <div className="relative aspect-[2/3] rounded-[2.2rem] md:rounded-[2.5rem] overflow-hidden mb-4 shadow-sm border border-gray-100 transition-all duration-700 hover:shadow-xl hover:-translate-y-3">
+                  <img
+                    src={relatedPoster}
                     alt={m.title}
                     className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                     loading="lazy"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
-                    <div className="flex items-center gap-2 mb-3">
-                       <img src={star} alt="rating" className="w-4 h-4" />
-                       <span className="text-white text-sm font-bold">{m.vote_average.toFixed(1)}</span>
-                    </div>
-                    <span className="text-white font-bold text-sm tracking-wide">View Details →</span>
-                  </div>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 truncate group-hover:text-indigo-600 transition-colors px-2">
+                <h3 className="text-lg font-bold truncate px-2 group-hover:text-indigo-600 transition-colors">
                   {m.title}
                 </h3>
-                <p className="text-xs text-gray-400 font-bold uppercase tracking-widest px-2 mt-1">
+                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest px-2 mt-1">
                   {new Date(m.release_date).getFullYear()}
                 </p>
               </div>
@@ -300,59 +275,40 @@ return (
           })}
         </div>
       </div>
+
     </div>
 
-            {/* LIQUID APPLE PLAYER MODAL */}
-{showModal && (
-  <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-12">
-    {/* Frosted Glass Overlay */}
-    <div 
-      className="absolute inset-0 bg-[#fbfbfd]/85 backdrop-blur-3xl animate-fade-in"
-      onClick={() => setShowModal(false)}
-    />
-
-    <div className="relative w-full max-w-6xl aspect-video group">
-      
-      {/* 1. THE DEEP SPREAD (Behind the player) */}
-      <div className="absolute -inset-24 opacity-40 group-hover:opacity-60 transition-opacity duration-1000">
-        <div className="absolute inset-[-100%] animate-siri-liquid" />
-      </div>
-
-      {/* 3. THE VIDEO PLAYER CONTAINER */}
-      <div className="relative w-full h-full bg-black rounded-[3rem] overflow-hidden shadow-[0_40px_100px_-20px_rgba(0,0,0,0.5)] border border-white/20 z-10">
-        
-        {/* Apple Style Top Bar */}
-        <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-black/90 to-transparent z-20 flex items-center justify-between px-10">
-          <div className="flex items-center gap-3">
-             <div className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
-             </div>
-             <span className="text-white/50 text-[10px] font-black tracking-[0.4em] uppercase italic">Vibe Cinema</span>
+    {/* VIDEO MODAL */}
+    {showModal && (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-12">
+        <div
+          className="absolute inset-0 bg-[#fbfbfd]/85 backdrop-blur-3xl"
+          onClick={() => setShowModal(false)}
+        />
+        <div className="relative w-full max-w-6xl aspect-video z-10 group">
+          {/* Siri Liquid Background Effect */}
+          <div className="absolute -inset-10 opacity-30 md:-inset-20">
+             <div className="absolute inset-0 animate-siri-liquid blur-3xl rounded-full" />
           </div>
-          <button 
-            onClick={() => setShowModal(false)}
-            className="w-10 h-10 flex items-center justify-center bg-white/10 backdrop-blur-xl border border-white/20 rounded-full text-white hover:bg-white hover:text-black transition-all duration-300"
-          >
-            ✕
-          </button>
+          
+          <div className="relative w-full h-full bg-black rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl border border-white/10">
+            <button 
+              onClick={() => setShowModal(false)}
+              className="absolute top-4 right-4 z-50 w-10 h-10 bg-white/10 hover:bg-white hover:text-black rounded-full text-white transition-all backdrop-blur-md"
+            >
+              ✕
+            </button>
+            <iframe
+              width="100%"
+              height="100%"
+              src={`https://www.youtube.com/embed/${trailerKey}?autoplay=1&modestbranding=1&rel=0`}
+              allowFullScreen
+              className="w-full h-full"
+            />
+          </div>
         </div>
-
-        <iframe
-          width="100%"
-          height="100%"
-          src={`https://www.youtube.com/embed/${trailerKey}?autoplay=1&modestbranding=1&rel=0&color=white`}
-          title="Liquid Intelligence Player"
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          className="w-full h-full"
-        ></iframe>
       </div>
-    </div>
-  </div>
-)}
+    )}
   </div>
 );
 }
-
