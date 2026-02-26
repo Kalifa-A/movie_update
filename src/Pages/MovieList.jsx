@@ -2,6 +2,7 @@ import React from 'react'
 import { useNavigate,Link } from 'react-router-dom'
 import useFetch from '../Hooks/UseFetch'
 import star from '../assets/star.png'
+import Footer from './detail_footer';
 
 export default function MovieList({ api_path }) {
   const { data, loading, error } = useFetch(api_path)
@@ -127,6 +128,7 @@ export default function MovieList({ api_path }) {
           })}
         </div>
       </div>
+      <Footer />
     </div>
   )
 }
