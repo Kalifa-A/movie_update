@@ -188,6 +188,38 @@ return (
             <p className="text-gray-500 leading-relaxed text-lg md:text-xl font-medium mb-12 max-w-2xl">
               {movie.overview}
             </p>
+            {/* TOP CAST SECTION: Horizontal Swipe */}
+<div className="mb-12">
+  <div className="flex items-center justify-between mb-8">
+    <h3 className="text-xl font-bold tracking-tight">Top Cast</h3>
+    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 md:hidden">Swipe →</span>
+  </div>
+  
+  <div className="flex gap-6 overflow-x-auto pb-6 scrollbar-hide snap-x">
+    {cast && cast.map((person) => (
+      <div key={person.id} className="text-center shrink-0 group snap-start">
+        {/* Avatar Circle */}
+        <div className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-4 rounded-full overflow-hidden shadow-md border-2 border-white transition-all duration-500 group-hover:scale-110 group-hover:shadow-indigo-100 group-hover:border-indigo-50">
+          <img 
+            src={person.profile_path 
+              ? `https://image.tmdb.org/t/p/w200${person.profile_path}` 
+              : 'https://via.placeholder.com/200?text=N/A'} 
+            className="w-full h-full object-cover"
+            alt={person.name}
+          />
+        </div>
+        
+        {/* Name & Character */}
+        <p className="text-[11px] font-black text-gray-900 w-24 truncate leading-tight">
+          {person.name}
+        </p>
+        <p className="text-[9px] text-gray-400 font-bold truncate w-24 mt-1 uppercase tracking-tighter">
+          {person.character}
+        </p>
+      </div>
+    ))}
+  </div>
+</div>
 
             {/* DESKTOP-ONLY BUTTONS */}
             <div className="hidden md:flex items-center gap-5 mt-4">
@@ -312,3 +344,4 @@ return (
   </div>
 );
 }
+
