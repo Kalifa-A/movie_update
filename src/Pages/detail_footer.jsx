@@ -4,7 +4,7 @@ export default function DetailFooter() {
   return (
     /* We use a high z-index and relative positioning to ensure 
        it stays above any background gradients or negative margins */
-    <div className="relative z-[150] w-full mt-32"> 
+    <div className="relative z-[10] w-full mt-32"> 
       <footer className="pb-12 border-t border-gray-100 pt-12 text-center">
         <div className="flex flex-col items-center gap-4">
           
@@ -53,4 +53,5 @@ export default function DetailFooter() {
     </div>
   );
 }
+
 export { DetailFooter };
