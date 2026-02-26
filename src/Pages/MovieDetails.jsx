@@ -311,37 +311,66 @@ return (
     </div>
 
     {/* VIDEO MODAL */}
-    {showModal && (
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-12">
-        <div
-          className="absolute inset-0 bg-[#fbfbfd]/85 backdrop-blur-3xl"
+    {/* VIDEO MODAL WITH LIQUID BRANDING */}
+{showModal && (
+  <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-12">
+    {/* Ultra-Blur Backdrop */}
+    <div
+      className="absolute inset-0 bg-[#fbfbfd]/80 backdrop-blur-[30px] transition-all duration-700"
+      onClick={() => setShowModal(false)}
+    />
+    
+    <div className="relative w-full max-w-6xl aspect-video z-10 group">
+      
+      {/* 1. TOP LIQUID BRANDING BAR */}
+      <div className="absolute -top-16 left-0 right-0 flex items-center justify-between px-4">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-200">
+            <div className="w-3 h-3 bg-white rounded-full animate-pulse" />
+          </div>
+          <span className="text-sm font-black uppercase tracking-[0.3em] text-gray-900">
+            Liquid <span className="text-indigo-600">Cinema</span>
+          </span>
+        </div>
+
+        {/* Close Button with Glassmorphism */}
+        <button 
           onClick={() => setShowModal(false)}
+          className="w-10 h-10 flex items-center justify-center bg-white/50 backdrop-blur-xl border border-gray-200 rounded-full text-gray-900 hover:bg-black hover:text-white transition-all duration-300 shadow-xl"
+        >
+          <span className="text-xl">✕</span>
+        </button>
+      </div>
+
+      {/* 2. THE PLAYER CONTAINER */}
+      <div className="relative w-full h-full bg-black rounded-[2.5rem] md:rounded-[3.5rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] border border-white/20">
+        
+        {/* Siri-style Ambient Glow behind video */}
+        <div className="absolute -inset-20 bg-gradient-to-tr from-indigo-500/20 via-purple-500/10 to-blue-500/20 blur-[100px] opacity-50 pointer-events-none" />
+
+        <iframe
+          width="100%"
+          height="100%"
+          src={`https://www.youtube.com/embed/${trailerKey}?autoplay=1&modestbranding=1&rel=0&showinfo=0`}
+          allow="autoplay; encrypted-media"
+          allowFullScreen
+          className="relative z-10 w-full h-full"
         />
-        <div className="relative w-full max-w-6xl aspect-video z-10 group">
-          {/* Siri Liquid Background Effect */}
-          <div className="absolute -inset-10 opacity-30 md:-inset-20">
-             <div className="absolute inset-0 animate-siri-liquid blur-3xl rounded-full" />
-          </div>
-          
-          <div className="relative w-full h-full bg-black rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl border border-white/10">
-            <button 
-              onClick={() => setShowModal(false)}
-              className="absolute top-4 right-4 z-50 w-10 h-10 bg-white/10 hover:bg-white hover:text-black rounded-full text-white transition-all backdrop-blur-md"
-            >
-              ✕
-            </button>
-            <iframe
-              width="100%"
-              height="100%"
-              src={`https://www.youtube.com/embed/${trailerKey}?autoplay=1&modestbranding=1&rel=0`}
-              allowFullScreen
-              className="w-full h-full"
-            />
-          </div>
+      </div>
+
+      {/* 3. BOTTOM INFO TAG */}
+      <div className="absolute -bottom-10 left-1/2 -translate-x-1/2">
+        <div className="px-6 py-2 bg-black/5 backdrop-blur-md border border-black/5 rounded-full">
+          <p className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400">
+            Now Playing: <span className="text-gray-900">{movie.title}</span>
+          </p>
         </div>
       </div>
-    )}
+    </div>
+  </div>
+)}
   </div>
 );
 }
+
 
