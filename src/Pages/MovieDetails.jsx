@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import star from '../assets/star.png'
 import play from '../assets/play.png'
 import axios from 'axios'
+import Footer from './detail_footer';
 
 
 export default function MovieDetail() {
@@ -188,7 +189,7 @@ return (
             <p className="text-gray-500 leading-relaxed text-lg md:text-xl font-medium mb-12 max-w-2xl">
               {movie.overview}
             </p>
-            {/* TOP CAST SECTION: Horizontal Swipe */}
+                        {/* TOP CAST SECTION: Horizontal Swipe */}
 <div className="mb-12">
   <div className="flex items-center justify-between mb-8">
     <h3 className="text-xl font-bold tracking-tight">Top Cast</h3>
@@ -310,52 +311,60 @@ return (
 
     </div>
 
-   {/* VIDEO MODAL */}
-{showModal && (
+    {/* VIDEO MODAL */}
+  {showModal && (
   <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8">
     {/* Ultra-Blur Backdrop */}
     <div
       className="absolute inset-0 bg-[#fbfbfd]/85 backdrop-blur-[40px]"
       onClick={() => setShowModal(false)}
     />
-    
+
     <div className="relative w-full max-w-6xl aspect-video z-10 group">
       
-      {/* 1. THE PLAYER CONTAINER */}
-      <div className="relative w-full h-full bg-black rounded-[2rem] md:rounded-[3.5rem] overflow-hidden shadow-[0_60px_100px_-20px_rgba(0,0,0,0.4)] border border-white/20">
+      {/* --- SIRI LIQUID ANIMATED BACKGROUND --- */}
+      <div className="absolute inset-0 -z-10 overflow-visible">
+        {/* Primary Liquid Blob */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-red-500/20 blur-[80px] rounded-full animate-siri-liquid" />
+        {/* Secondary Liquid Blob */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/3 -translate-y-1/2 w-[100%] h-[100%] bg-green-500/20 blur-[100px] rounded-full animate-siri-liquid" style={{ animationDelay: '-2s' }} />
+        {/* Tertiary Liquid Blob */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-2/3 -translate-y-1/3 w-[80%] h-[80%] bg-blue-400/20 blur-[60px] rounded-full animate-siri-liquid" style={{ animationDelay: '-4s' }} />
+      </div>
+
+      {/* PLAYER CONTAINER */}
+      <div className="relative w-full h-full bg-black rounded-[2.5rem] md:rounded-[3.5rem] overflow-hidden shadow-[0_60px_100px_-20px_rgba(0,0,0,0.4)] border border-white/20">
         
-        {/* INTERNAL LIQUID BADGE (Top Left) */}
-        <div className="absolute top-6 left-6 z-20 flex items-center gap-2 px-3 py-1.5 bg-black/20 backdrop-blur-md rounded-full border border-white/10 pointer-events-none">
+        {/* INTERNAL LIQUID BADGE */}
+        <div className="absolute top-6 left-6 z-20 flex items-center gap-2 px-3 py-1.5 bg-black/40 backdrop-blur-md rounded-full border border-white/10 pointer-events-none">
           <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse shadow-[0_0_10px_#6366f1]" />
           <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/80">
             Liquid <span className="text-white">Cinema</span>
           </span>
         </div>
 
-        {/* CLOSE BUTTON (Top Right) */}
-        <button 
+        {/* CLOSE BUTTON */}
+        <button
           onClick={() => setShowModal(false)}
-          className="absolute top-6 right-6 z-20 w-10 h-10 flex items-center justify-center bg-white/10 backdrop-blur-xl border border-white/20 text-white rounded-full hover:bg-white hover:text-black transition-all duration-300"
+          className="absolute top-6 right-6 z-50 w-10 h-10 flex items-center justify-center bg-white/10 backdrop-blur-xl border border-white/20 text-white rounded-full hover:bg-white hover:text-black transition-all duration-300 active:scale-90"
         >
           <span className="text-xl">✕</span>
         </button>
 
-        {/* Ambient Glow */}
-        <div className="absolute -inset-20 bg-gradient-to-tr from-indigo-500/20 via-purple-500/10 to-blue-500/20 blur-[120px] opacity-40 pointer-events-none" />
-
+        {/* Video Frame */}
         <iframe
           width="100%"
           height="100%"
           src={`https://www.youtube.com/embed/${trailerKey}?autoplay=1&modestbranding=1&rel=0`}
           allow="autoplay; encrypted-media"
           allowFullScreen
-          className="relative z-10 w-full h-full"
+          className="relative z-10 w-full h-full border-0"
         />
       </div>
 
-      {/* 2. NOW PLAYING PILL (Centered with bottom spacing) */}
-      <div className="absolute -bottom-14 left-1/2 -translate-x-1/2 w-full flex justify-center pb-4">
-        <div className="px-6 py-2.5 bg-white/40 backdrop-blur-2xl border border-white/40 rounded-full shadow-sm flex items-center gap-3">
+      {/* NOW PLAYING PILL */}
+      <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 w-full flex justify-center pb-4">
+        <div className="px-6 py-2.5 bg-white/40 backdrop-blur-2xl border border-white/40 rounded-full shadow-lg flex items-center gap-3">
           <span className="text-[8px] font-black uppercase tracking-[0.3em] text-indigo-600">
             Now Playing
           </span>
@@ -365,12 +374,11 @@ return (
           </span>
         </div>
       </div>
+
     </div>
   </div>
 )}
+    <Footer />
   </div>
 );
 }
-
-
-
