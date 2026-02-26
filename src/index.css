@@ -41,3 +41,13 @@
 .group-hover\:animate-shimmer {
   animation: shimmer 1.5s infinite;
 }
+
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
