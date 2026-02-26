@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Footer from './detail_footer';
+import Video from '../assets/video-player.png';
 
-// Import your assets here if they are local files
-// import star from '../assets/star.png';
 
 export default function Watchlist() {
   const [movies, setMovies] = useState([]);
@@ -69,7 +69,7 @@ export default function Watchlist() {
         
         {/* Collection Header */}
         <header className="mb-12 md:mb-20">
-          <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-gray-900 leading-none">
+          <h1 className="text-5xl md:text-5xl font-black tracking-tighter text-gray-900 leading-none">
             Your <span className="text-indigo-600">Collection.</span>
           </h1>
           <p className="text-gray-400 mt-6 text-lg md:text-xl font-medium max-w-xl">
@@ -79,14 +79,14 @@ export default function Watchlist() {
 
         {movies.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32 bg-white rounded-[3rem] border border-dashed border-gray-200 shadow-sm">
-            <div className="text-6xl mb-6">🎬</div>
-            <p className="text-gray-400 text-xl font-bold tracking-tight mb-8">No movies in your vault yet.</p>
-            <button 
-              onClick={() => navigate('/')}
-              className="px-8 py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all active:scale-95"
-            >
-              Start Discovering
-            </button>
+            <div className="text-6xl mb-6 w-40 h-40"><img src={Video} alt="Video Player Icon" /></div>
+                      <p className="text-gray-400 text-xl font-bold tracking-tight mb-8">No movies in your vault yet.</p>
+          <button 
+            onClick={() => navigate('/')}
+            className="px-12 py-5 bg-black text-white text-sm font-black uppercase tracking-[0.2em] rounded-full shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] transition-all duration-500 hover:shadow-indigo-200 hover:-translate-y-1 active:scale-95"
+          >
+            Explore Library
+          </button>
           </div>
         ) : (
           /* RESPONSIVE GRID: 2 columns on mobile, auto-scaling on desktop */
@@ -144,6 +144,7 @@ export default function Watchlist() {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 }
