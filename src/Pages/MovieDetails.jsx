@@ -328,7 +328,7 @@ return (
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
              </div>
-             <span className="text-white/50 text-[10px] font-black tracking-[0.4em] uppercase italic">Liquid Cinema</span>
+             <span className="text-white/50 text-[10px] font-black tracking-[0.4em] uppercase italic">Vibe Cinema</span>
           </div>
           <button 
             onClick={() => setShowModal(false)}
@@ -355,3 +355,4 @@ return (
   </div>
 );
 }
+
