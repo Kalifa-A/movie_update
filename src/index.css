@@ -6,18 +6,15 @@
   100% { transform: rotate(360deg) scale(1.1); }
 }
 
+@keyframes siri-liquid {
+  0% { transform: translate(0%, 0%) scale(1); }
+  33% { transform: translate(10%, 10%) scale(1.1); }
+  66% { transform: translate(-5%, 5%) scale(0.9); }
+  100% { transform: translate(0%, 0%) scale(1); }
+}
+
 .animate-siri-liquid {
-  background: conic-gradient(
-    from 0deg,
-    #6366f1, /* Indigo 600 */
-    #a5b4fc, /* Indigo 300 */
-    #ffffff, /* White */
-    #22d3ee, /* Cyan 400 */
-    #6366f1  /* Back to Indigo */
-  );
-  /* Deep blur for that corner-bleed effect */
-  filter: blur(90px); 
-  animation: siri-liquid-wide 10s linear infinite;
+  animation: siri-liquid 2s infinite ease-in-out;
 }
 
 /* this for delete glow button*/
