@@ -310,60 +310,59 @@ return (
 
     </div>
 
-    {/* VIDEO MODAL */}
-    {/* VIDEO MODAL WITH LIQUID BRANDING */}
+   {/* VIDEO MODAL */}
 {showModal && (
-  <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-12">
+  <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8">
     {/* Ultra-Blur Backdrop */}
     <div
-      className="absolute inset-0 bg-[#fbfbfd]/80 backdrop-blur-[30px] transition-all duration-700"
+      className="absolute inset-0 bg-[#fbfbfd]/85 backdrop-blur-[40px]"
       onClick={() => setShowModal(false)}
     />
     
     <div className="relative w-full max-w-6xl aspect-video z-10 group">
       
-      {/* 1. TOP LIQUID BRANDING BAR */}
-      <div className="absolute -top-16 left-0 right-0 flex items-center justify-between px-4">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-200">
-            <div className="w-3 h-3 bg-white rounded-full animate-pulse" />
-          </div>
-          <span className="text-sm font-black uppercase tracking-[0.3em] text-gray-900">
-            Liquid <span className="text-indigo-600">Cinema</span>
+      {/* 1. THE PLAYER CONTAINER */}
+      <div className="relative w-full h-full bg-black rounded-[2rem] md:rounded-[3.5rem] overflow-hidden shadow-[0_60px_100px_-20px_rgba(0,0,0,0.4)] border border-white/20">
+        
+        {/* INTERNAL LIQUID BADGE (Top Left) */}
+        <div className="absolute top-6 left-6 z-20 flex items-center gap-2 px-3 py-1.5 bg-black/20 backdrop-blur-md rounded-full border border-white/10 pointer-events-none">
+          <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse shadow-[0_0_10px_#6366f1]" />
+          <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/80">
+            Liquid <span className="text-white">Cinema</span>
           </span>
         </div>
 
-        {/* Close Button with Glassmorphism */}
+        {/* CLOSE BUTTON (Top Right) */}
         <button 
           onClick={() => setShowModal(false)}
-          className="w-10 h-10 flex items-center justify-center bg-white/50 backdrop-blur-xl border border-gray-200 rounded-full text-gray-900 hover:bg-black hover:text-white transition-all duration-300 shadow-xl"
+          className="absolute top-6 right-6 z-20 w-10 h-10 flex items-center justify-center bg-white/10 backdrop-blur-xl border border-white/20 text-white rounded-full hover:bg-white hover:text-black transition-all duration-300"
         >
           <span className="text-xl">✕</span>
         </button>
-      </div>
 
-      {/* 2. THE PLAYER CONTAINER */}
-      <div className="relative w-full h-full bg-black rounded-[2.5rem] md:rounded-[3.5rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] border border-white/20">
-        
-        {/* Siri-style Ambient Glow behind video */}
-        <div className="absolute -inset-20 bg-gradient-to-tr from-indigo-500/20 via-purple-500/10 to-blue-500/20 blur-[100px] opacity-50 pointer-events-none" />
+        {/* Ambient Glow */}
+        <div className="absolute -inset-20 bg-gradient-to-tr from-indigo-500/20 via-purple-500/10 to-blue-500/20 blur-[120px] opacity-40 pointer-events-none" />
 
         <iframe
           width="100%"
           height="100%"
-          src={`https://www.youtube.com/embed/${trailerKey}?autoplay=1&modestbranding=1&rel=0&showinfo=0`}
+          src={`https://www.youtube.com/embed/${trailerKey}?autoplay=1&modestbranding=1&rel=0`}
           allow="autoplay; encrypted-media"
           allowFullScreen
           className="relative z-10 w-full h-full"
         />
       </div>
 
-      {/* 3. BOTTOM INFO TAG */}
-      <div className="absolute -bottom-10 left-1/2 -translate-x-1/2">
-        <div className="px-6 py-2 bg-black/5 backdrop-blur-md border border-black/5 rounded-full">
-          <p className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400">
-            Now Playing: <span className="text-gray-900">{movie.title}</span>
-          </p>
+      {/* 2. NOW PLAYING PILL (Centered with bottom spacing) */}
+      <div className="absolute -bottom-14 left-1/2 -translate-x-1/2 w-full flex justify-center pb-4">
+        <div className="px-6 py-2.5 bg-white/40 backdrop-blur-2xl border border-white/40 rounded-full shadow-sm flex items-center gap-3">
+          <span className="text-[8px] font-black uppercase tracking-[0.3em] text-indigo-600">
+            Now Playing
+          </span>
+          <div className="h-3 w-[1px] bg-gray-300" />
+          <span className="text-[11px] md:text-xs font-bold text-gray-900 tracking-tight whitespace-nowrap">
+            {movie.title}
+          </span>
         </div>
       </div>
     </div>
@@ -372,5 +371,6 @@ return (
   </div>
 );
 }
+
 
 
