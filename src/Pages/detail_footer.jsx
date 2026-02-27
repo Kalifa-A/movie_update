@@ -4,8 +4,8 @@ export default function DetailFooter() {
   return (
     /* We use a high z-index and relative positioning to ensure 
        it stays above any background gradients or negative margins */
-    <div className="relative z-[10] w-full mt-32"> 
-      <footer className="pb-12 border-t border-gray-100 pt-12 text-center">
+    <div className="w-full mt-20 clear-both"> 
+      <footer className="pb-12 border-t border-gray-100 pt-12 text-center bg-white">
         <div className="flex flex-col items-center gap-4">
           
           {/* Status Indicator */}
@@ -55,3 +55,4 @@ export default function DetailFooter() {
 }
 
 export { DetailFooter };
+
