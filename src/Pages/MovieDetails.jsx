@@ -18,7 +18,7 @@ export default function MovieDetail() {
   const [trailerKey, setTrailerKey] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
-  const API_KEY = import.meta.env.VITE_API_ID
+  const API_KEY = import.meta.env.VITE_API_URL
 const addToWatchlist = async () => {
   if (!movie || isAdding) return;
   const token = localStorage.getItem('token');
@@ -382,3 +382,4 @@ return (
   </div>
 );
 }
+
