@@ -12,7 +12,7 @@ export default function Watchlist() {
   const token = localStorage.getItem('token');
 
   // Define API Base
-  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  const API_BASE ='http://localhost:5000/api';
 
   useEffect(() => {
     if (!token) {
@@ -149,3 +149,4 @@ export default function Watchlist() {
   );
 }
 export { Watchlist };
+
