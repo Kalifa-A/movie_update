@@ -22,13 +22,18 @@ export default function MovieDetail() {
 const addToWatchlist = async () => {
   if (!movie || isAdding) return;
   const token = localStorage.getItem('token');
-  console.log("Token being sent:", token); // If this is null, you aren't logged in!
 
   if (!token) {
     alert("Please login first!");
     navigate('/auth');
     return;
   }
+
+  // --- THE FIX STARTS HERE ---
+  // This tells the app: "Use the live URL from Vercel, but if that's missing, use localhost"
+  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  
+  setIsAdding(true);
 
   try {
     const movieData = {
@@ -39,12 +44,13 @@ const addToWatchlist = async () => {
     };
 
     const response = await axios.post(
-      'http://localhost:5000/api/watchlist', 
+      `${API_BASE}/watchlist`, // ✅ Changed from 'http://localhost:5000...'
       movieData, 
       {
         headers: { 'x-auth-token': token } 
       }
     );
+  // --- THE FIX ENDS HERE ---
 
     if (response.status === 201) {
       alert("Added to Watchlist!");
@@ -52,10 +58,10 @@ const addToWatchlist = async () => {
   } catch (err) {
     console.log("Error Response:", err.response?.data);
     alert(err.response?.data?.message || "Error adding movie");
+  } finally {
+    setIsAdding(false);
   }
-  setIsAdding(false);
-};
-const getTrailer = async (id) => {
+};const getTrailer = async (id) => {
   try {
     const res = await axios.get(
       `https://api.themoviedb.org/3/movie/${id}/videos?api_key=${API_KEY}`
@@ -389,3 +395,4 @@ return (
 
           
         
+
