@@ -33,7 +33,7 @@ export default function DetailFooter() {
             </a>
             
             <a 
-              href="#portfolio" 
+              href="https://kalifa-portfolio.vercel.app" 
               className="text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-indigo-600 transition-all duration-300 py-2"
             >
               Portfolio
@@ -55,4 +55,5 @@ export default function DetailFooter() {
 }
 
 export { DetailFooter };
+
 
