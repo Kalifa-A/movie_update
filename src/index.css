@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@keyframes siri-liquid-wide {
+  0% { transform: rotate(0deg) scale(1.1); }
+  50% { transform: rotate(180deg) scale(1.4); }
+  100% { transform: rotate(360deg) scale(1.1); }
+}
+
+@keyframes siri-liquid {
+  0% { transform: translate(0%, 0%) scale(1); }
+  33% { transform: translate(10%, 10%) scale(1.1); }
+  66% { transform: translate(-5%, 5%) scale(0.9); }
+  100% { transform: translate(0%, 0%) scale(1); }
+}
+
+.animate-siri-liquid {
+  animation: siri-liquid 2s infinite ease-in-out;
+}
+
+/* this for delete glow button*/
+@media (max-width: 768px) {
+  .mobile-delete-glow {
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+  }
+}
+/* this for watchtrailer button */
+.hover-glow-indigo:hover {
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.4), 0 0 40px rgba(99, 102, 241, 0.2);
+}
+/* This for watchlist button */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.group-hover\:animate-shimmer {
+  animation: shimmer 1.5s infinite;
+}
+
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
