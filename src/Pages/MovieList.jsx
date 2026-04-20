@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import useFetch from '../Hooks/UseFetch'
@@ -163,8 +162,7 @@ export default function MovieList({ api_path }) {
       <Footer />
     </div>
   )
-}
-=======
+  }
 import React from 'react'
 import { useNavigate,Link } from 'react-router-dom'
 import useFetch from '../Hooks/UseFetch'
@@ -298,5 +296,4 @@ export default function MovieList({ api_path }) {
       <Footer />
     </div>
   )
-}
->>>>>>> d2ed0de127d2452967592c64552a51cfd013efa4
+  }
