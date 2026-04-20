@@ -1,5 +1,13 @@
+<<<<<<< HEAD
 export const Card = () => {
   return (
     <div>Card</div>
   )
 }
+=======
+export const Card = () => {
+  return (
+    <div>Card</div>
+  )
+}
+>>>>>>> d2ed0de127d2452967592c64552a51cfd013efa4
