@@ -5,6 +5,8 @@ import play from '../assets/play.png'
 import axios from 'axios'
 import Footer from './detail_footer';
 import { useDarkMode } from '../Context/DarkModeContext'
+import { motion, AnimatePresence } from 'framer-motion'
+import MoviePlayer from '../Components/MoviePlayer'
 
 
 export default function MovieDetail() {
@@ -18,9 +20,10 @@ export default function MovieDetail() {
   const [isAdding, setIsAdding] = useState(false); // State to manage add-to-watchlist button
   const [trailerKey, setTrailerKey] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showPlayer, setShowPlayer] = useState(false);
   const { darkMode } = useDarkMode()
 
-  const API_KEY = import.meta.env.VITE_API_ID
+  const API_KEY = import.meta.env.VITE_TMDB_KEY
 const addToWatchlist = async () => {
   if (!movie || isAdding) return;
   const token = localStorage.getItem('token');
@@ -130,22 +133,44 @@ return (
   <div className={`min-h-screen overflow-x-hidden font-sans pb-20 md:pb-0 transition-colors duration-500 ${darkMode ? 'bg-gray-950 text-gray-100' : 'bg-[#fbfbfd] text-gray-900'}`}>
     
     {/* 1. HERO BACKDROP SECTION */}
-    <div className="relative h-[60vh] md:h-[65vh] w-full overflow-hidden">
-      {backdrop && (
-        <>
-          <img
-            src={backdrop}
-            alt="backdrop"
-            className="absolute inset-0 w-full h-full object-cover scale-110 md:scale-105 animate-slow-zoom"
-          />
-          {/* Mobile-optimized gradient bleed */}
-          <div className={`absolute inset-0 bg-gradient-to-t ${darkMode ? 'from-gray-950 via-gray-950/40' : 'from-[#fbfbfd] via-[#fbfbfd]/40'} to-black/40`} />
-        </>
-      )}
+    <div className="relative h-[60vh] md:h-[65vh] w-full overflow-hidden bg-black">
+      <AnimatePresence mode="wait">
+        {showPlayer ? (
+          <motion.div 
+            key="player"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+            className="absolute inset-0 w-full h-full z-20 bg-black pt-16 pb-8 px-4"
+          >
+            <MoviePlayer tmdbId={movie.id} />
+          </motion.div>
+        ) : (
+          backdrop && (
+            <motion.div
+              key="backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.8 }}
+              className="absolute inset-0 w-full h-full"
+            >
+              <img
+                src={backdrop}
+                alt="backdrop"
+                className="absolute inset-0 w-full h-full object-cover scale-110 md:scale-105 animate-slow-zoom"
+              />
+              {/* Mobile-optimized gradient bleed */}
+              <div className={`absolute inset-0 bg-gradient-to-t ${darkMode ? 'from-gray-950 via-gray-950/40' : 'from-[#fbfbfd] via-[#fbfbfd]/40'} to-black/40`} />
+            </motion.div>
+          )
+        )}
+      </AnimatePresence>
     </div>
 
     {/* 2. MAIN CONTENT CONTAINER */}
-    <div className="max-w-6xl mx-auto px-6 -mt-32 md:-mt-48 relative z-10">
+    <div className={`max-w-6xl mx-auto px-6 relative z-10 transition-all duration-700 ${showPlayer ? 'mt-8 md:mt-12' : '-mt-32 md:-mt-48'}`}>
       
       {/* MOVIE DETAILS SECTION */}
       <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-start mb-20">
@@ -195,9 +220,21 @@ return (
 
             {/* Overview */}
             <h3 className="text-xl font-bold mb-4">Overview</h3>
-            <p className={`leading-relaxed text-lg md:text-xl font-medium mb-12 max-w-2xl ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+            <p className={`leading-relaxed text-lg md:text-xl font-medium mb-8 max-w-2xl ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
               {movie.overview}
             </p>
+            
+            {/* WATCH NOW BUTTON */}
+            <button
+               onClick={() => {
+                 setShowPlayer(!showPlayer);
+                 window.scrollTo({ top: 0, behavior: 'smooth' });
+               }}
+               className="mb-12 px-8 py-4 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-black rounded-[2rem] shadow-lg hover:shadow-red-500/30 transition-all active:scale-95 flex items-center gap-3"
+            >
+               <img src={play} alt="play" className="w-5 h-5 invert" />
+               {showPlayer ? 'CLOSE PLAYER' : 'WATCH NOW'}
+            </button>
                         {/* TOP CAST SECTION: Horizontal Swipe */}
 <div className="mb-12">
   <div className="flex items-center justify-between mb-8">
