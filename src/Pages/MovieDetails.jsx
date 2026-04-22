@@ -224,17 +224,6 @@ return (
               {movie.overview}
             </p>
             
-            {/* WATCH NOW BUTTON */}
-            <button
-               onClick={() => {
-                 setShowPlayer(!showPlayer);
-                 window.scrollTo({ top: 0, behavior: 'smooth' });
-               }}
-               className="mb-12 px-8 py-4 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-black rounded-[2rem] shadow-lg hover:shadow-red-500/30 transition-all active:scale-95 flex items-center gap-3"
-            >
-               <img src={play} alt="play" className="w-5 h-5 invert" />
-               {showPlayer ? 'CLOSE PLAYER' : 'WATCH NOW'}
-            </button>
                         {/* TOP CAST SECTION: Horizontal Swipe */}
 <div className="mb-12">
   <div className="flex items-center justify-between mb-8">
@@ -270,6 +259,63 @@ return (
 
             {/* DESKTOP-ONLY BUTTONS */}
             <div className="hidden md:flex items-center gap-5 mt-4">
+              <button
+                onClick={() => {
+                  setShowPlayer(!showPlayer);
+                  // If opening, smooth scroll to the player; if closing, scroll to top
+                  if (!showPlayer) {
+                    setTimeout(() => {
+                      playerSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 100);
+                  } else {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }
+                }}
+                className={`
+                  relative group overflow-hidden
+                  px-10 py-5 
+                  flex items-center gap-4
+                  rounded-[2.2rem] font-black tracking-tighter text-lg
+                  transition-all duration-500 ease-out
+                  active:scale-95 active:brightness-90
+                  ${showPlayer 
+                    ? 'bg-zinc-800 text-white border border-white/10 shadow-xl' 
+                    : 'bg-white text-black shadow-[0_20px_40px_-10px_rgba(255,255,255,0.2)] hover:shadow-[0_20px_50px_-5px_rgba(79,70,229,0.4)]'
+                  }
+                `}
+              >
+                {/* Magnetic Glow Effect (Only shows when not playing) */}
+                {!showPlayer && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-rose-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                )}
+
+                {/* Button Content */}
+                <div className="relative z-10 flex items-center gap-3">
+                  {showPlayer ? (
+                    // Close Icon
+                    <div className="w-6 h-6 flex items-center justify-center bg-white/10 rounded-full">
+                      <span className="text-white text-xs">✕</span>
+                    </div>
+                  ) : (
+                    // Play Icon with specialized styling
+                    <div className="w-6 h-6 flex items-center justify-center bg-black rounded-full group-hover:bg-white transition-colors duration-300">
+                      <img 
+                        src={play} 
+                        alt="play" 
+                        className="w-3 h-3 ml-0.5 group-hover:invert transition-all" 
+                      />
+                    </div>
+                  )}
+                  
+                  <span className={!showPlayer ? "group-hover:text-white transition-colors duration-300" : ""}>
+                    {showPlayer ? 'CLOSE CINEMA' : 'WATCH NOW'}
+                  </span>
+                </div>
+
+                {/* Shimmer Light Reflection */}
+                <div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:animate-shimmer" />
+              </button>
+              
               <button 
                 onClick={() => getTrailer(movie.id)}
                 className={`group flex items-center gap-4 px-8 py-5 backdrop-blur-2xl border font-bold rounded-[2.2rem] transition-all duration-500 shadow-2xl active:scale-95 ${darkMode ? 'bg-gray-800/50 border-gray-700 text-white hover:bg-gray-700' : 'bg-white/10 border-white/20 text-black hover:bg-white'}`}
