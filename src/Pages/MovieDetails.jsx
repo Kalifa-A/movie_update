@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import star from '../assets/star.png'
 import play from '../assets/play.png'
@@ -22,6 +22,7 @@ export default function MovieDetail() {
   const [showModal, setShowModal] = useState(false);
   const [showPlayer, setShowPlayer] = useState(false);
   const { darkMode } = useDarkMode()
+  const playerSectionRef = useRef(null);
 
   const API_KEY = import.meta.env.VITE_TMDB_KEY
 const addToWatchlist = async () => {
@@ -133,7 +134,7 @@ return (
   <div className={`min-h-screen overflow-x-hidden font-sans pb-20 md:pb-0 transition-colors duration-500 ${darkMode ? 'bg-gray-950 text-gray-100' : 'bg-[#fbfbfd] text-gray-900'}`}>
     
     {/* 1. HERO BACKDROP SECTION */}
-    <div className="relative h-[60vh] md:h-[65vh] w-full overflow-hidden bg-black">
+    <div ref={playerSectionRef} className="relative h-[60vh] md:h-[65vh] w-full overflow-hidden bg-black">
       <AnimatePresence mode="wait">
         {showPlayer ? (
           <motion.div 
