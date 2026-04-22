@@ -342,22 +342,67 @@ return (
       </div>
 
       {/* MOBILE STICKY BOTTOM BAR */}
-      <div className={`fixed bottom-0 left-0 right-0 p-6 backdrop-blur-3xl border-t flex gap-3 z-50 md:hidden ${darkMode ? 'bg-gray-900/80 border-gray-800' : 'bg-white/80 border-gray-100'}`}>
-        <button 
-          onClick={() => getTrailer(movie.id)}
-          className="flex-1 flex items-center justify-center gap-2 py-4 bg-black text-white rounded-2xl font-bold active:scale-95"
-        >
-          <img src={play} className="w-5 h-5 invert" alt="play" /> Trailer
-        </button>
-        <button 
-          onClick={addToWatchlist}
-          disabled={isAdding}
-          className="flex-1 py-4 bg-indigo-600 text-white rounded-2xl font-bold active:scale-95"
-        >
-          {isAdding ? "Adding..." : "+ Watchlist"}
-        </button>
-      </div>
+<div className={`fixed bottom-0 left-0 right-0 p-5 pb-8 backdrop-blur-2xl border-t z-50 md:hidden transition-colors duration-500 ${
+  darkMode 
+    ? 'bg-gray-950/80 border-white/5 shadow-[0_-20px_40px_rgba(0,0,0,0.4)]' 
+    : 'bg-white/80 border-gray-100 shadow-[0_-10px_30px_rgba(0,0,0,0.05)]'
+}`}>
+  <div className="max-w-md mx-auto flex items-center gap-3">
+    
+    {/* PRIMARY ACTION: WATCH NOW */}
+    <button 
+      onClick={() => {
+        const turningOn = !showPlayer;
+        setShowPlayer(turningOn);
+        if (turningOn) {
+          setTimeout(() => {
+            playerSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 100);
+        }
+      }}
+      className={`relative flex-[2] flex items-center justify-center gap-3 py-4 rounded-2xl font-black text-sm tracking-tight transition-all duration-300 active:scale-95 ${
+        showPlayer 
+          ? 'bg-red-500/10 text-red-500 border border-red-500/20' 
+          : 'bg-indigo-600 text-white shadow-[0_10px_25px_-5px_rgba(79,70,229,0.4)]'
+      }`}
+    >
+      <img 
+        src={showPlayer ? close : play} 
+        alt="icon" 
+        className={`w-4 h-4 ${!showPlayer && 'invert'}`} 
+      />
+      {showPlayer ? "CLOSE PLAYER" : "WATCH NOW"}
+    </button>
 
+    {/* SECONDARY ACTION: TRAILER (Icon Based) */}
+    <button 
+      onClick={() => getTrailer(movie.id)}
+      className={`flex-1 flex flex-col items-center justify-center gap-1 py-3 rounded-2xl border transition-all active:scale-90 ${
+        darkMode 
+          ? 'bg-gray-900 border-white/10 text-gray-300' 
+          : 'bg-gray-50 border-gray-200 text-gray-600'
+      }`}
+    >
+      <img src={play} className={`w-4 h-4 ${darkMode ? 'invert opacity-70' : 'opacity-60'}`} alt="play" />
+      <span className="text-[10px] font-black uppercase tracking-tighter">Trailer</span>
+    </button>
+
+    {/* SECONDARY ACTION: WATCHLIST (Icon Based) */}
+    <button 
+      onClick={addToWatchlist}
+      disabled={isAdding}
+      className={`flex-1 flex flex-col items-center justify-center gap-1 py-3 rounded-2xl border transition-all active:scale-90 ${
+        darkMode 
+          ? 'bg-gray-900 border-white/10 text-gray-300' 
+          : 'bg-gray-50 border-gray-200 text-gray-600'
+      } ${isAdding ? 'opacity-50' : ''}`}
+    >
+      <span className="text-lg leading-none font-light">{isAdding ? "..." : "+"}</span>
+      <span className="text-[10px] font-black uppercase tracking-tighter">Watchlist</span>
+    </button>
+
+  </div>
+</div>
       {/* RELATED MOVIES SECTION: Mobile Horizontal Scroll */}
       <div className="mt-12 md:mt-32">
         <header className="mb-8 md:mb-12 flex items-center justify-between">
