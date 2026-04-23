@@ -134,7 +134,7 @@ return (
   <div className={`min-h-screen overflow-x-hidden font-sans pb-20 md:pb-0 transition-colors duration-500 ${darkMode ? 'bg-gray-950 text-gray-100' : 'bg-[#fbfbfd] text-gray-900'}`}>
     
     {/* 1. HERO BACKDROP SECTION */}
-    <div ref={playerSectionRef} className="relative h-[60vh] md:h-[65vh] w-full overflow-hidden bg-black">
+    <div ref={playerSectionRef} className={`relative w-full overflow-hidden bg-black transition-all duration-700 ${showPlayer ? 'h-[100vh]' : 'h-[60vh] md:h-[65vh]'}`}>
       <AnimatePresence mode="wait">
         {showPlayer ? (
           <motion.div 

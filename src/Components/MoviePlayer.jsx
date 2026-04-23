@@ -36,7 +36,7 @@ export default function MoviePlayer({ tmdbId }) {
   const iframeSrc = currentServer.url(tmdbId, currentTime);
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center bg-[#050505] p-4 md:p-8 font-sans selection:bg-indigo-500/30">
+    <div className="w-full h-full flex flex-col items-center justify-start overflow-y-auto scrollbar-hide bg-[#050505] p-4 md:p-12 font-sans selection:bg-indigo-500/30">
       <MetaNoReferrer />
 
       {/* HEADER SECTION */}
@@ -71,6 +71,17 @@ export default function MoviePlayer({ tmdbId }) {
               </button>
             ))}
           </div>
+
+          {/* FULLSCREEN MODE */}
+          <button
+            onClick={toggleFullscreen}
+            className="group px-6 py-3 bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-[10px] font-black uppercase tracking-widest rounded-2xl border border-zinc-800 transition-all active:scale-95 flex items-center gap-2"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 opacity-70 group-hover:opacity-100 transition-opacity" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+            </svg>
+            Fullscreen
+          </button>
 
           {/* FOCUS MODE */}
           <button

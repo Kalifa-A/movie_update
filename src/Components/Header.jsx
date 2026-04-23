@@ -62,6 +62,15 @@ export const Header = () => {
     }, 100)
   }, [location.pathname, token]) // Re-run if token changes (login/logout)
 
+  const handleSearchClick = () => {
+    if (location.pathname === "/search") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.dispatchEvent(new CustomEvent("focus-search-input"));
+    } else {
+      navigate("/search");
+    }
+  };
+
   return (
     <header className={`sticky top-0 z-50 backdrop-blur-2xl border-b transition-colors duration-500 ${darkMode ? 'bg-gray-900/70 border-gray-800/50' : 'bg-white/70 border-gray-100/50'}`}>
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -108,7 +117,7 @@ export const Header = () => {
         {/* Action Buttons: Search + Auth */}
         <div className="flex items-center gap-3">
           <button
-            onClick={() => navigate("/search")}
+            onClick={handleSearchClick}
             className={`p-2 rounded-full transition-all active:scale-90 ${darkMode ? 'bg-gray-800/50 hover:bg-indigo-900/50' : 'bg-gray-100/50 hover:bg-indigo-50'}`}
           >
             <img src={searchIcon} alt="Search" className={`w-5 h-5 opacity-60 ${darkMode ? 'invert' : ''}`} />
