@@ -34,7 +34,7 @@ export default function Search() {
         )
         if (!res.ok) throw new Error("Suggestion fetch failed")
         const data = await res.json()
-        const filtered = (data.results || []).filter(item => item.media_type === 'movie' || item.media_type === 'person');
+        const filtered = (data.results || []).filter(item => item.media_type === 'movie' || item.media_type === 'tv' || item.media_type === 'person');
         // Limit to top 6 suggestions for a clean UI
         setSuggestions(filtered.slice(0, 6))
         setShowSuggestions(true)
@@ -103,7 +103,7 @@ export default function Search() {
            const movies = await fetchMoviesByActorId(person.id);
            setResults(movies);
         } else {
-           const movies = (data.results || []).filter(item => item.media_type === 'movie');
+           const movies = (data.results || []).filter(item => item.media_type === 'movie' || item.media_type === 'tv');
            setResults(movies);
         }
       }
@@ -142,6 +142,8 @@ export default function Search() {
     setShowSuggestions(false)
     if (item.media_type === 'person') {
       navigate(`/search?q=${item.name}&type=person&id=${item.id}`)
+    } else if (item.media_type === 'tv') {
+      navigate(`/tv/${item.id}`)
     } else {
       navigate(`/movie/${item.id}`)
     }
@@ -160,7 +162,7 @@ export default function Search() {
             <input
              ref={playerSectionRef}
               type="text"
-              placeholder="Search movies..."
+              placeholder="Search movies, TV shows, or actors..."
               value={query}
               onFocus={() => query.length >= 2 && setShowSuggestions(true)}
               onChange={(e) => {
@@ -184,9 +186,11 @@ export default function Search() {
                        <p className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-indigo-500/60">Top Suggestions</p>
                       {suggestions.map((item) => {
                         const isPerson = item.media_type === 'person';
+                        const isTV = item.media_type === 'tv';
                         const imagePath = isPerson ? item.profile_path : item.poster_path;
-                        const title = isPerson ? item.name : item.title;
-                        const subtitle = isPerson ? item.known_for_department : (item.release_date ? new Date(item.release_date).getFullYear() : "N/A");
+                        const title = isPerson ? item.name : (isTV ? item.name : item.title);
+                        const dateField = isTV ? item.first_air_date : item.release_date;
+                        const subtitle = isPerson ? item.known_for_department : (dateField ? new Date(dateField).getFullYear() : "N/A");
 
                         return (
                           <div
@@ -256,26 +260,32 @@ export default function Search() {
           <div className="flex justify-center py-20 animate-pulse text-indigo-600 font-bold">Loading...</div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {results.map((movie) => (
+            {results.map((movie) => {
+              const isTV = movie.media_type === 'tv';
+              const displayTitle = isTV ? movie.name : movie.title;
+              const routePath = isTV ? `/tv/${movie.id}` : `/movie/${movie.id}`;
+              
+              return (
               <div 
                 key={movie.id}
-                onClick={() => navigate(`/movie/${movie.id}`)}
+                onClick={() => navigate(routePath)}
                 className="group cursor-pointer"
               >
                 <div className="relative aspect-[2/3] rounded-[2rem] overflow-hidden mb-4 shadow-sm transition-all duration-500 hover:shadow-2xl hover:-translate-y-2">
                   <img
                     src={movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : "https://via.placeholder.com/500x750"}
-                    alt={movie.title}
+                    alt={displayTitle}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                 </div>
-                <h2 className={`font-bold truncate transition-colors ${darkMode ? 'text-gray-200 group-hover:text-indigo-400' : 'text-gray-900 group-hover:text-indigo-600'}`}>{movie.title}</h2>
+                <h2 className={`font-bold truncate transition-colors ${darkMode ? 'text-gray-200 group-hover:text-indigo-400' : 'text-gray-900 group-hover:text-indigo-600'}`}>{displayTitle}</h2>
                 <div className="flex items-center gap-2 mt-1">
                   <img src={star} alt="star" className="w-3 h-3" />
                   <p className={`text-sm ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>{movie.vote_average.toFixed(1)}</p>
                 </div>
               </div>
-            ))}
+            );
+            })}
           </div>
         )}
       </div>

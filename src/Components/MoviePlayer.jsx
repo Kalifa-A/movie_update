@@ -1,20 +1,63 @@
 import React, { useState, useEffect, useRef } from 'react';
 
+// Updated SERVERS with dynamic type and ID handling
 const SERVERS = [
-  { id: 'vidsrc', label: 'Server 1', url: (id, t) => `https://vidsrc.to/embed/movie/${id}${t > 0 ? `?t=${t}` : ''}` },
-  { id: 'embedsu', label: 'Server 2', url: (id, t) => `https://embed.su/embed/movie/${id}${t > 0 ? `?t=${t}` : ''}` },
+  { 
+    id: 'vidsrc', 
+    label: 'Server 1', 
+    url: (id, type, t) => `https://vidsrc.to/embed/${type}/${id}${t > 0 ? `?t=${t}` : ''}` 
+  },
+  { 
+    id: 'streamimdb', 
+    label: 'Server 2', 
+    // Uses imdbId (tt...) instead of tmdbId
+    url: (imdbId, type, t) => `https://streamimdb.ru/embed/${type}/${imdbId}${t > 0 ? `?t=${t}` : ''}` 
+  },
 ];
 
 export default function MoviePlayer({ tmdbId }) {
   const [server, setServer] = useState('vidsrc');
   const [currentTime, setCurrentTime] = useState(0);
   const [iframeKey, setIframeKey] = useState(0);
+  const [imdbId, setImdbId] = useState(null);
+  const [mediaType, setMediaType] = useState('movie'); // default to movie
   const playerContainerRef = useRef(null);
   const iframeRef = useRef(null);
 
+  const API_KEY = import.meta.env.VITE_API_ID;
+
+  // 1. Fetch External IDs and Media Info to get the real IMDb ID and Type
+  useEffect(() => {
+    const fetchMovieDetails = async () => {
+      try {
+        // We check both movie and tv endpoints to see which one returns data
+        const movieRes = await fetch(`https://api.themoviedb.org/3/movie/${tmdbId}?api_key=${API_KEY}`);
+        let data = await movieRes.json();
+        let type = 'movie';
+
+        if (data.success === false) {
+           const tvRes = await fetch(`https://api.themoviedb.org/3/tv/${tmdbId}?api_key=${API_KEY}`);
+           data = await tvRes.json();
+           type = 'tv';
+        }
+
+        setMediaType(type);
+
+        // Fetch the IMDb ID specifically
+        const idRes = await fetch(`https://api.themoviedb.org/3/${type}/${tmdbId}/external_ids?api_key=${API_KEY}`);
+        const idData = await idRes.json();
+        setImdbId(idData.imdb_id);
+      } catch (err) {
+        console.error("Error identifying media:", err);
+      }
+    };
+
+    if (tmdbId) fetchMovieDetails();
+  }, [tmdbId, API_KEY]);
+
   useEffect(() => {
     setIframeKey((k) => k + 1);
-  }, [server, currentTime]);
+  }, [server, currentTime, imdbId]);
 
   const handleFocusMode = () => {
     if (iframeRef.current) {
@@ -33,7 +76,19 @@ export default function MoviePlayer({ tmdbId }) {
   };
 
   const currentServer = SERVERS.find((s) => s.id === server);
-  const iframeSrc = currentServer.url(tmdbId, currentTime);
+  
+  // Choose which ID to send based on what the server prefers
+  // Server 1 (vidsrc) usually takes TMDB, Server 2 (streamimdb) usually takes IMDb
+  const activeId = server === 'streamimdb' ? imdbId : tmdbId;
+  
+  // Show nothing until we have the IDs ready to prevent loading "Wednesday" by accident
+  const iframeSrc = activeId ? currentServer.url(activeId, mediaType, currentTime) : "";
+
+  if (!activeId && server === 'streamimdb') return (
+    <div className="aspect-video flex items-center justify-center bg-black rounded-[2rem]">
+        <p className="text-zinc-500 animate-pulse text-xs font-black uppercase tracking-widest">Fetching Secure Server Link...</p>
+    </div>
+  );
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start overflow-y-auto scrollbar-hide bg-[#050505] p-4 md:p-12 font-sans selection:bg-indigo-500/30">
@@ -47,12 +102,13 @@ export default function MoviePlayer({ tmdbId }) {
           </h2>
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
-            <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-bold">Ultra HD Streaming Enabled</p>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-bold">
+                {mediaType === 'tv' ? 'Series' : 'Feature Film'} • Ultra HD Streaming Enabled
+            </p>
           </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-4">
-          {/* SERVER SELECTORS */}
           <div className="flex bg-zinc-900/50 p-1 rounded-2xl border border-zinc-800/50 backdrop-blur-sm">
             {SERVERS.map((s) => (
               <button
@@ -72,7 +128,6 @@ export default function MoviePlayer({ tmdbId }) {
             ))}
           </div>
 
-          {/* FULLSCREEN MODE */}
           <button
             onClick={toggleFullscreen}
             className="group px-6 py-3 bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-[10px] font-black uppercase tracking-widest rounded-2xl border border-zinc-800 transition-all active:scale-95 flex items-center gap-2"
@@ -83,7 +138,6 @@ export default function MoviePlayer({ tmdbId }) {
             Fullscreen
           </button>
 
-          {/* FOCUS MODE */}
           <button
             onClick={handleFocusMode}
             className="group px-6 py-3 bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-[10px] font-black uppercase tracking-widest rounded-2xl border border-zinc-800 transition-all active:scale-95 flex items-center gap-3"
@@ -99,7 +153,6 @@ export default function MoviePlayer({ tmdbId }) {
 
       {/* PLAYER CONTAINER */}
       <div className="relative w-full max-w-6xl group">
-        {/* Ambient Glow Backdrop */}
         <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-[2.2rem] blur-2xl opacity-0 group-hover:opacity-100 transition duration-1000"></div>
         
         <div 
@@ -107,7 +160,6 @@ export default function MoviePlayer({ tmdbId }) {
           onDoubleClick={toggleFullscreen}
           className="w-full aspect-video rounded-[2rem] overflow-hidden shadow-2xl border border-white/5 relative bg-black group transition-transform duration-700"
         >
-          {/* Subtle Glass Overlay (Non-blocking) */}
           <div className="absolute inset-0 z-10 pointer-events-none border-[1px] border-inset border-white/10 rounded-[2rem]"></div>
 
           <iframe
@@ -123,7 +175,6 @@ export default function MoviePlayer({ tmdbId }) {
             className="absolute inset-0 w-full h-full border-0 z-0"
           />
 
-          {/* FULLSCREEN TOAST (Appears on Hover) */}
           <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-2 group-hover:translate-y-0 pointer-events-none hidden md:block">
             <div className="px-5 py-2 bg-black/60 backdrop-blur-xl rounded-full border border-white/10 text-[9px] font-black uppercase tracking-[0.2em] text-zinc-300 shadow-2xl">
               Double-click for Fullscreen

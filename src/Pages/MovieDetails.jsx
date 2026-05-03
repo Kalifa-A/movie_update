@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import star from '../assets/star.png'
 import play from '../assets/play.png'
 import axios from 'axios'
@@ -12,6 +12,7 @@ import MoviePlayer from '../Components/MoviePlayer'
 export default function MovieDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
   const [movie, setMovie] = useState(null)
   const [cast, setCast] = useState([])
   const [related, setRelated] = useState([]) // New state for related movies
@@ -23,6 +24,10 @@ export default function MovieDetail() {
   const [showPlayer, setShowPlayer] = useState(false);
   const { darkMode } = useDarkMode()
   const playerSectionRef = useRef(null);
+
+  // Detect if this is a TV show or movie based on URL path
+  const isTV = location.pathname.startsWith('/tv/');
+  const mediaType = isTV ? 'tv' : 'movie';
 
   const API_KEY = import.meta.env.VITE_TMDB_KEY
 const addToWatchlist = async () => {
@@ -71,7 +76,7 @@ const addToWatchlist = async () => {
 const getTrailer = async (id) => {
   try {
     const res = await axios.get(
-      `https://api.themoviedb.org/3/movie/${id}/videos?api_key=${API_KEY}`
+      `https://api.themoviedb.org/3/${mediaType}/${id}/videos?api_key=${API_KEY}`
     );
     // Look for a YouTube video labeled 'Trailer'
     const trailer = res.data.results.find(
@@ -94,9 +99,9 @@ const getTrailer = async (id) => {
         setLoading(true)
         // Fetch Details, Credits, and Recommendations in one go
         const [movieRes, creditsRes, relatedRes] = await Promise.all([
-          fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}`),
-          fetch(`https://api.themoviedb.org/3/movie/${id}/credits?api_key=${API_KEY}`),
-          fetch(`https://api.themoviedb.org/3/movie/${id}/recommendations?api_key=${API_KEY}`)
+          fetch(`https://api.themoviedb.org/3/${mediaType}/${id}?api_key=${API_KEY}`),
+          fetch(`https://api.themoviedb.org/3/${mediaType}/${id}/credits?api_key=${API_KEY}`),
+          fetch(`https://api.themoviedb.org/3/${mediaType}/${id}/recommendations?api_key=${API_KEY}`)
         ])
 
         if (!movieRes.ok) throw new Error('Failed to fetch data')
@@ -117,7 +122,7 @@ const getTrailer = async (id) => {
     fetchMovieData()
     // Scroll to top when the movie ID changes
     window.scrollTo(0, 0)
-  }, [id, API_KEY])
+  }, [id, API_KEY, mediaType])
 
   if (loading) return (
     <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-950' : 'bg-[#fbfbfd]'}`}>
@@ -179,7 +184,7 @@ return (
         {/* Desktop-Only Floating Poster */}
         <div className="hidden md:block w-1/3 shrink-0">
           <div className="rounded-[3rem] overflow-hidden shadow-[0_40px_80px_-15px_rgba(0,0,0,0.35)] border border-white/20">
-            <img src={poster} alt={movie.title} className="w-full h-auto" />
+            <img src={poster} alt={isTV ? movie.name : movie.title} className="w-full h-auto" />
           </div>
         </div>
 
@@ -201,7 +206,7 @@ return (
 
             {/* Title */}
             <h1 className="text-4xl md:text-7xl font-black tracking-tighter mb-6 md:mb-8 leading-[1.1]">
-              {movie.title}
+              {isTV ? movie.name : movie.title}
             </h1>
 
             {/* Stats */}
@@ -214,9 +219,9 @@ return (
                 </span>
               </div>
               <div className={`h-4 w-[1px] ${darkMode ? 'bg-gray-600' : 'bg-gray-300'}`} />
-              <span>{movie.runtime} min</span>
+              <span>{isTV ? (movie.episode_run_time?.[0] || 'N/A') : movie.runtime} min</span>
               <div className={`h-4 w-[1px] ${darkMode ? 'bg-gray-600' : 'bg-gray-300'}`} />
-              <span>{new Date(movie.release_date).getFullYear()}</span>
+              <span>{new Date(isTV ? movie.first_air_date : movie.release_date).getFullYear()}</span>
             </div>
 
             {/* Overview */}
@@ -508,7 +513,7 @@ return (
           </span>
           <div className={`h-3 w-[1px] ${darkMode ? 'bg-gray-600' : 'bg-gray-300'}`} />
           <span className={`text-[11px] md:text-xs font-bold tracking-tight whitespace-nowrap ${darkMode ? 'text-gray-200' : 'text-gray-900'}`}>
-            {movie.title}
+            {isTV ? movie.name : movie.title}
           </span>
         </div>
       </div>

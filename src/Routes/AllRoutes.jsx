@@ -27,6 +27,7 @@ export default function AllRoutes() {
           <Route path="/top-rated" element={<MovieList api_path="top_rated" />} />
           <Route path="/upcoming" element={<MovieList api_path="upcoming" />} />
           <Route path="/movie/:id" element={<MovieDetail />} />
+          <Route path="/tv/:id" element={<MovieDetail isTV={true} />} />
           <Route path="/search" element={<Search />} />
           <Route path="*" element={<NotFound />} />
           <Route path="/watchlist" element={<Watchlist />} />
