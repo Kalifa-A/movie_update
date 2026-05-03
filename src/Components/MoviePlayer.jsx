@@ -2,21 +2,22 @@ import React, { useState, useEffect, useRef } from 'react';
 
 // Updated SERVERS with dynamic type and ID handling
 const SERVERS = [
-  { 
-    id: 'vidsrc', 
-    label: 'Server 1', 
-    url: (id, type, t) => `https://vidsrc.to/embed/${type}/${id}${t > 0 ? `?t=${t}` : ''}` 
-  },
-  { 
+    { 
     id: 'streamimdb', 
-    label: 'Server 2', 
+    label: 'Server 1', 
     // Uses imdbId (tt...) instead of tmdbId
     url: (imdbId, type, t) => `https://streamimdb.ru/embed/${type}/${imdbId}${t > 0 ? `?t=${t}` : ''}` 
   },
+  { 
+    id: 'vidsrc', 
+    label: 'Server 2', 
+    url: (id, type, t) => `https://vidsrc.to/embed/${type}/${id}${t > 0 ? `?t=${t}` : ''}` 
+  },
+
 ];
 
 export default function MoviePlayer({ tmdbId }) {
-  const [server, setServer] = useState('vidsrc');
+  const [server, setServer] = useState('streamimdb');
   const [currentTime, setCurrentTime] = useState(0);
   const [iframeKey, setIframeKey] = useState(0);
   const [imdbId, setImdbId] = useState(null);
