@@ -118,9 +118,26 @@ export const Header = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={handleSearchClick}
-            className={`p-2 rounded-full transition-all active:scale-90 ${darkMode ? 'bg-gray-800/50 hover:bg-indigo-900/50' : 'bg-gray-100/50 hover:bg-indigo-50'}`}
+            aria-label="Search Movies"
+            className={`group relative flex items-center gap-2 p-2 px-3 rounded-full transition-all duration-500 active:scale-95 
+              ${darkMode 
+                ? 'bg-gray-800/40 hover:bg-indigo-600/20 border border-white/5 hover:border-indigo-500/30' 
+                : 'bg-white hover:bg-indigo-50 border border-gray-200 hover:border-indigo-200'} 
+              shadow-[0_4px_20px_-1px_rgba(0,0,0,0.1)] hover:shadow-indigo-500/20`}
           >
-            <img src={searchIcon} alt="Search" className={`w-5 h-5 opacity-60 ${darkMode ? 'invert' : ''}`} />
+            <div className="absolute inset-0 rounded-full bg-linear-to-tr from-indigo-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity blur-md" />
+            <svg 
+              className={`w-4 h-4 transition-all duration-500 group-hover:rotate-12 ${darkMode ? 'text-gray-400 group-hover:text-indigo-400' : 'text-gray-600 group-hover:text-indigo-600'}`} 
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor" 
+              strokeWidth={3}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <span className={`text-[10px] font-black uppercase tracking-widest hidden lg:block ${darkMode ? 'text-gray-500 group-hover:text-indigo-400' : 'text-gray-400 group-hover:text-indigo-600'}`}>
+              Search
+            </span>
           </button>
 
           <div className={`h-6 w-[1px] mx-1 hidden md:block ${darkMode ? 'bg-gray-700' : 'bg-gray-200'}`} />

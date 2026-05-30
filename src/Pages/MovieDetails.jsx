@@ -7,6 +7,7 @@ import Footer from './detail_footer';
 import { useDarkMode } from '../Context/DarkModeContext'
 import { motion, AnimatePresence } from 'framer-motion'
 import MoviePlayer from '../Components/MoviePlayer'
+import SoundtrackSection from '../Components/SoundtrackSection'
 
 
 export default function MovieDetail() {
@@ -408,6 +409,14 @@ return (
 
   </div>
 </div>
+
+      {/* 3. SOUNDTRACK SECTION */}
+      <SoundtrackSection 
+        movieTitle={isTV ? movie.name : movie.title} 
+        year={new Date(isTV ? movie.first_air_date : movie.release_date).getFullYear().toString()}
+        darkMode={darkMode}
+      />
+
       {/* RELATED MOVIES SECTION: Mobile Horizontal Scroll */}
       <div className="mt-12 md:mt-32">
         <header className="mb-8 md:mb-12 flex items-center justify-between">
