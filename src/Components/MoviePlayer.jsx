@@ -11,7 +11,7 @@ const SERVERS = [
   { 
     id: 'vidsrc', 
     label: 'Server 2', 
-    url: (id, type, t) => `https://vidsrc.to/embed/${type}/${id}${t > 0 ? `?t=${t}` : ''}` 
+    url: (id, type, t) => `https://vidsrc.pm/embed/${type}/${id}${t > 0 ? `?t=${t}` : ''}` 
   },
 
 ];
