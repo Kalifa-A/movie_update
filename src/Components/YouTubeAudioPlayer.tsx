@@ -46,7 +46,7 @@ const YouTubeAudioPlayer: React.FC<YouTubeAudioPlayerProps> = ({ track, onNext, 
       autoplay: 1,
       controls: 0,
     },
-  };
+  } as const;
 
   return (
     <motion.div 
