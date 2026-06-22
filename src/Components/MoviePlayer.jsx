@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 const SERVERS = [
    { 
     id: 'vidsrc_pm', 
-    label: 'Server 1 (VidSrc.pm)', 
+    label: 'Server 3 (VidSrc.pm)', 
     url: (id, type, t) => `https://vidsrc.pm/embed/${type}/${id}${t > 0 ? `?t=${t}` : ''}` 
   },
 
@@ -15,7 +15,7 @@ const SERVERS = [
   },
   { 
     id: 'streamimdb', 
-    label: 'Server 3 (StreamIMDb)', 
+    label: 'Server 1 (StreamIMDb)', 
     url: (id, type) => `https://streamimdb.ru/embed/${type}/${id}` 
   },
 ];
