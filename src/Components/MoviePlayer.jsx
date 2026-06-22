@@ -2,25 +2,25 @@ import React, { useState, useEffect, useRef } from 'react';
 
 // Updated SERVERS with 5 dynamic secure streaming servers
 const SERVERS = [
+    { 
+    id: 'streamimdb', 
+    label: 'Server 1 (StreamIMDb)', 
+    url: (id, type) => `https://streamimdb.ru/embed/${type}/${id}` 
+  },
    { 
     id: 'vidsrc_pm', 
-    label: 'Server 3 (VidSrc.pm)', 
+    label: 'Server 2 (VidSrc.pm)', 
     url: (id, type, t) => `https://vidsrc.pm/embed/${type}/${id}${t > 0 ? `?t=${t}` : ''}` 
   },
 
   { 
     id: 'vidsrc_me', 
-    label: 'Server 2 (VidSrc.me)', 
+    label: 'Server 3 (VidSrc.me)', 
     url: (id, type) => `https://vidsrc.me/embed/${type}/${id}` 
-  },
-  { 
-    id: 'streamimdb', 
-    label: 'Server 1 (StreamIMDb)', 
-    url: (id, type) => `https://streamimdb.ru/embed/${type}/${id}` 
   },
 ];
 export default function MoviePlayer({ tmdbId }) {
-  const [server, setServer] = useState('vidsrc_pm');
+  const [server, setServer] = useState('streamimdb');
   const [currentTime, setCurrentTime] = useState(0);
   const [iframeKey, setIframeKey] = useState(0);
   const [imdbId, setImdbId] = useState(null);
