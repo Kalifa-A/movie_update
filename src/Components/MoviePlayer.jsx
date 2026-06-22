@@ -2,30 +2,40 @@ import React, { useState, useEffect, useRef } from 'react';
 
 // Updated SERVERS with 5 dynamic secure streaming servers
 const SERVERS = [
-    { 
+  { 
     id: 'streamimdb', 
     label: 'Server 1', 
     url: (id, type) => `https://streamimdb.ru/embed/${type}/${id}` 
   },
-   { 
+  { 
     id: 'vidsrc_pm', 
     label: 'Server 2', 
     url: (id, type, t) => `https://vidsrc.pm/embed/${type}/${id}${t > 0 ? `?t=${t}` : ''}` 
   },
   {
-    id:'mapple',
-    label:'server 3',
-    url:(id, type, t) => `https://mapple.rip/watch/${type}/${id}${t > 0 ? `?t=${t}` : ''}`
+    id: 'mapple',
+    label: 'Server 3',
+    url: (id, type, t) => `https://mapple.rip/watch/${type}/${id}${t > 0 ? `?t=${t}` : ''}`
   },
   {
-    id:'vares',
-    label:'server 4',
-    url:(id, type, t) => `https://vares.top/embed/${type}/${id}${t > 0 ? `?t=${t}` : ''}`
+    id: 'vares',
+    label: 'Server 4',
+    url: (id, type, t) => `https://vares.top/embed/${type}/${id}${t > 0 ? `?t=${t}` : ''}`
   },
   {
-    id:'1embed',
-    label:'server 5',
-    url:(id, type, t) => `https://1embed.cc/embed/${type}/${id}${t > 0 ? `?t=${t}` : ''}`
+    id: '1embed',
+    label: 'Server 5',
+    url: (id, type, t) => `https://1embed.cc/embed/${type}/${id}${t > 0 ? `?t=${t}` : ''}`
+  },
+  {
+    id: 'vidlink',
+    label: 'Server 6 (VidLink)',
+    url: (id, type) => type === 'movie' ? `https://vidlink.pro/movie/${id}` : `https://vidlink.pro/tv/${id}/1/1`
+  },
+  {
+    id: 'embedsu',
+    label: 'Server 7 (Embed.su)',
+    url: (id, type) => type === 'movie' ? `https://embed.su/embed/movie/${id}` : `https://embed.su/embed/tv/${id}/1/1`
   }
 ];
 export default function MoviePlayer({ tmdbId }) {
@@ -35,6 +45,7 @@ export default function MoviePlayer({ tmdbId }) {
   const [imdbId, setImdbId] = useState(null);
   const [mediaType, setMediaType] = useState('movie'); // default to movie
   const [showDropdown, setShowDropdown] = useState(false);
+  const [sandboxEnabled, setSandboxEnabled] = useState(true);
   
   const playerContainerRef = useRef(null);
   const iframeRef = useRef(null);
@@ -83,7 +94,7 @@ export default function MoviePlayer({ tmdbId }) {
 
   useEffect(() => {
     setIframeKey((k) => k + 1);
-  }, [server, currentTime, imdbId]);
+  }, [server, currentTime, imdbId, sandboxEnabled]);
 
   const handleFocusMode = () => {
     if (iframeRef.current) {
@@ -138,7 +149,7 @@ export default function MoviePlayer({ tmdbId }) {
               className="px-6 py-3 bg-zinc-900 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl border border-zinc-800 transition-all hover:bg-zinc-800 active:scale-95 flex items-center gap-2 cursor-pointer shadow-md"
             >
               <span>{currentServer.label}</span>
-              <svg xmlns="http://www.w3.org/2500/svg" className={`w-3.5 h-3.5 opacity-70 transition-transform duration-300 ${showDropdown ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" className={`w-3.5 h-3.5 opacity-70 transition-transform duration-300 ${showDropdown ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="6 9 12 15 18 9"></polyline>
               </svg>
             </button>
@@ -167,6 +178,21 @@ export default function MoviePlayer({ tmdbId }) {
               </div>
             )}
           </div>
+
+          <button
+            onClick={() => setSandboxEnabled(!sandboxEnabled)}
+            className={`group px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-2xl border transition-all active:scale-95 flex items-center gap-3 cursor-pointer ${
+              sandboxEnabled 
+                ? 'bg-emerald-950/40 border-emerald-800/60 text-emerald-400 hover:bg-emerald-900/40 hover:text-emerald-300' 
+                : 'bg-rose-950/40 border-rose-800/60 text-rose-400 hover:bg-rose-900/40 hover:text-rose-300'
+            }`}
+          >
+            <div className="relative flex h-2 w-2">
+              <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${sandboxEnabled ? 'bg-emerald-400' : 'bg-rose-400'}`}></span>
+              <span className={`relative inline-flex rounded-full h-2 w-2 ${sandboxEnabled ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
+            </div>
+            {sandboxEnabled ? 'Sandbox Shield: On' : 'Sandbox Shield: Off'}
+          </button>
 
           <button
             onClick={toggleFullscreen}
@@ -212,7 +238,7 @@ export default function MoviePlayer({ tmdbId }) {
             allowFullScreen
             referrerPolicy="no-referrer"
             allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
-            sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-presentation allow-popups"
+            sandbox={sandboxEnabled ? "allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-presentation allow-popups" : undefined}
             className="absolute inset-0 w-full h-full border-0 z-0"
           />
 
@@ -221,6 +247,47 @@ export default function MoviePlayer({ tmdbId }) {
               Double-click for Fullscreen
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* TROUBLESHOOTING & SECURITY INFO */}
+      <div className="w-full max-w-6xl mt-8 p-6 rounded-3xl bg-zinc-950/60 border border-zinc-900/60 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div className="flex gap-4">
+          <div className={`p-3 rounded-2xl shrink-0 ${sandboxEnabled ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
+            {sandboxEnabled ? (
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            )}
+          </div>
+          <div>
+            <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-1">
+              {sandboxEnabled ? 'Security Sandbox Shield Active' : 'Sandbox Shield Disabled'}
+            </h4>
+            <p className="text-zinc-400 text-[11px] leading-relaxed max-w-2xl font-medium">
+              {sandboxEnabled 
+                ? 'We stream within a secure sandboxed environment to block redirects, popups, and intrusive ads. If the player displays a connection or block error, try switching servers, disabling the Sandbox Shield, or opening the link directly.'
+                : 'The sandbox protection shield is disabled. You may experience popups or redirects from the stream host. Enable the shield to block them again.'
+              }
+            </p>
+          </div>
+        </div>
+        
+        <div className="flex flex-wrap gap-3 w-full md:w-auto">
+          {iframeSrc && (
+            <a
+              href={iframeSrc}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-5 py-2.5 bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-[10px] font-black uppercase tracking-widest rounded-xl border border-zinc-800 transition-all text-center flex-1 md:flex-initial"
+            >
+              Open Stream Directly
+            </a>
+          )}
         </div>
       </div>
 
