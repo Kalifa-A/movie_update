@@ -4,18 +4,18 @@ import React, { useState, useEffect, useRef } from 'react';
 const SERVERS = [
     { 
     id: 'streamimdb', 
-    label: 'Server 1 (StreamIMDb)', 
+    label: 'Server 1', 
     url: (id, type) => `https://streamimdb.ru/embed/${type}/${id}` 
   },
    { 
     id: 'vidsrc_pm', 
-    label: 'Server 2 (VidSrc.pm)', 
+    label: 'Server 2', 
     url: (id, type, t) => `https://vidsrc.pm/embed/${type}/${id}${t > 0 ? `?t=${t}` : ''}` 
   },
 
   { 
     id: 'vidsrc_me', 
-    label: 'Server 3 (VidSrc.me)', 
+    label: 'Server 3', 
     url: (id, type) => `https://vidsrc.me/embed/${type}/${id}` 
   },
 ];
