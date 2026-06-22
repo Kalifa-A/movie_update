@@ -12,12 +12,21 @@ const SERVERS = [
     label: 'Server 2', 
     url: (id, type, t) => `https://vidsrc.pm/embed/${type}/${id}${t > 0 ? `?t=${t}` : ''}` 
   },
-
-  { 
-    id: 'vidsrc_me', 
-    label: 'Server 3', 
-    url: (id, type) => `https://vidsrc.me/embed/${type}/${id}` 
+  {
+    id:'mapple',
+    label:'server 3',
+    url:(id, type, t) => `https://mapple.rip/watch/${type}/${id}${t > 0 ? `?t=${t}` : ''}`
   },
+  {
+    id:'vares',
+    label:'server 4',
+    url:(id, type, t) => `https://vares.top/embed/${type}/${id}${t > 0 ? `?t=${t}` : ''}`
+  },
+  {
+    id:'1embed',
+    label:'server 5',
+    url:(id, type, t) => `https://1embed.cc/embed/${type}/${id}${t > 0 ? `?t=${t}` : ''}`
+  }
 ];
 export default function MoviePlayer({ tmdbId }) {
   const [server, setServer] = useState('streamimdb');
@@ -202,8 +211,8 @@ export default function MoviePlayer({ tmdbId }) {
             frameBorder="0"
             allowFullScreen
             referrerPolicy="no-referrer"
-            allow="autoplay; encrypted-media; fullscreen"
-            sandbox="allow-scripts allow-same-origin allow-forms"
+            allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-presentation allow-popups"
             className="absolute inset-0 w-full h-full border-0 z-0"
           />
 
