@@ -7,6 +7,7 @@ import NotFound from '../Pages/PageNotFound'
 import LegalPage from '../Pages/LegalPage'
 import { Watchlist } from '../Pages/Watchlist'
 import Auth from '../Pages/Auth'
+import PersonDetails from '../Pages/PersonDetails'
 import { useDarkMode } from '../Context/DarkModeContext'
 
 export default function AllRoutes() {
@@ -28,6 +29,7 @@ export default function AllRoutes() {
           <Route path="/upcoming" element={<MovieList api_path="upcoming" />} />
           <Route path="/movie/:id" element={<MovieDetail />} />
           <Route path="/tv/:id" element={<MovieDetail isTV={true} />} />
+          <Route path="/person/:id" element={<PersonDetails />} />
           <Route path="/search" element={<Search />} />
           <Route path="*" element={<NotFound />} />
           <Route path="/watchlist" element={<Watchlist />} />

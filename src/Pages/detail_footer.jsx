@@ -8,13 +8,13 @@ export default function DetailFooter() {
     /* We use a high z-index and relative positioning to ensure 
        it stays above any background gradients or negative margins */
     <div className="w-full mt-20 clear-both"> 
-      <footer className={`pb-12 border-t pt-12 text-center transition-colors duration-500 ${darkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100'}`}>
+      <footer className={`pb-12 border-t pt-12 text-center transition-colors duration-500 ${darkMode ? 'bg-transparent border-gray-900/80' : 'bg-transparent border-gray-100'}`}>
         <div className="flex flex-col items-center gap-4">
           
           {/* Status Indicator */}
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-indigo-600 rounded-full animate-pulse shadow-[0_0_8px_#4f46e5]" />
-            <span className={`text-[10px] font-black uppercase tracking-[0.4em] ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+            <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse shadow-[0_0_8px_#6366f1]" />
+            <span className={`text-[10px] font-black uppercase tracking-[0.4em] ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
               Designed &amp; Engineered By
             </span>
           </div>
@@ -30,14 +30,14 @@ export default function DetailFooter() {
               href="https://github.com/Kalifa-A/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className={`text-[10px] font-bold uppercase tracking-widest transition-all duration-300 py-2 ${darkMode ? 'text-gray-500 hover:text-indigo-400' : 'text-gray-400 hover:text-indigo-600'}`}
+              className={`text-[10px] font-bold uppercase tracking-widest transition-all duration-300 py-2 ${darkMode ? 'text-gray-400 hover:text-indigo-400' : 'text-gray-500 hover:text-indigo-600'}`}
             >
               GitHub
             </a>
             
             <a 
               href="#portfolio" 
-              className={`text-[10px] font-bold uppercase tracking-widest transition-all duration-300 py-2 ${darkMode ? 'text-gray-500 hover:text-indigo-400' : 'text-gray-400 hover:text-indigo-600'}`}
+              className={`text-[10px] font-bold uppercase tracking-widest transition-all duration-300 py-2 ${darkMode ? 'text-gray-400 hover:text-indigo-400' : 'text-gray-500 hover:text-indigo-600'}`}
             >
               Portfolio
             </a>
@@ -46,7 +46,7 @@ export default function DetailFooter() {
               href="https://www.linkedin.com/in/kalifa-a-695139266/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className={`text-[10px] font-bold uppercase tracking-widest transition-all duration-300 py-2 ${darkMode ? 'text-gray-500 hover:text-indigo-400' : 'text-gray-400 hover:text-indigo-600'}`}
+              className={`text-[10px] font-bold uppercase tracking-widest transition-all duration-300 py-2 ${darkMode ? 'text-gray-400 hover:text-indigo-400' : 'text-gray-500 hover:text-indigo-600'}`}
             >
               LinkedIn
             </a>

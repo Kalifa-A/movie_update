@@ -154,26 +154,30 @@ export default function Search() {
       {/* Search Bar Section */}
       <div className={`backdrop-blur-2xl border-b py-16 mb-12 transition-colors duration-500 ${darkMode ? 'bg-gray-900/70 border-gray-800' : 'bg-white/70 border-gray-100'}`}>
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <h1 className="text-5xl font-extrabold tracking-tight mb-8">
+          <h1 className="text-5xl md:text-6xl font-black tracking-tighter mb-4">
             Explore <span className="text-indigo-600">Cinema.</span>
           </h1>
+          <p className={`text-[10px] md:text-xs font-black uppercase tracking-[0.25em] mb-10 transition-colors ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+            Search movies, TV shows, or actors
+          </p>
 
-          <form onSubmit={handleSearch} className="relative group">
-            <input
-             ref={playerSectionRef}
-              type="text"
-              placeholder="Search movies, TV shows, or actors..."
-              value={query}
-              onFocus={() => query.length >= 2 && setShowSuggestions(true)}
-              onChange={(e) => {
-                setQuery(e.target.value);
-                setResults([]);
-              }}
-              className={`w-full px-8 py-6 text-xl rounded-[2rem] border-2 border-transparent outline-none transition-all duration-500 shadow-sm ${darkMode ? 'bg-gray-800/50 focus:bg-gray-800 focus:border-indigo-500/30 text-white placeholder-gray-500' : 'bg-gray-100/50 focus:bg-white focus:border-indigo-500/20'}`}
-            />
-            <button type="submit" className="absolute right-4 top-1/2 -translate-y-1/2 bg-indigo-600 text-white px-8 py-3 rounded-2xl font-bold hover:bg-indigo-700 transition-colors">
-              Search
-            </button>
+          <form onSubmit={handleSearch}>
+            <div className="relative group">
+              <input
+               ref={playerSectionRef}
+                type="text"
+                placeholder="Search"
+                value={query}
+                onFocus={() => query.length >= 2 && setShowSuggestions(true)}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setResults([]);
+                }}
+                className={`w-full pl-6 pr-24 py-4 text-base md:pl-8 md:pr-36 md:py-6 md:text-xl rounded-[1.5rem] md:rounded-[2rem] border-2 border-transparent outline-none transition-all duration-500 shadow-sm ${darkMode ? 'bg-gray-800/50 focus:bg-gray-800 focus:border-indigo-500/30 text-white placeholder-gray-500' : 'bg-gray-100/50 focus:bg-white focus:border-indigo-500/20'}`}
+              />
+              <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 bg-indigo-600 text-white px-5 py-2.5 md:px-8 md:py-3 rounded-xl md:rounded-2xl text-xs md:text-base font-bold hover:bg-indigo-700 transition-all active:scale-95">
+                Search
+              </button>
 
             {/* Suggestions Dropdown */}
             {showSuggestions && (suggestions.length > 0 || isSuggesting) && (
@@ -250,6 +254,7 @@ export default function Search() {
                 onClick={() => setShowSuggestions(false)}
               />
             )}
+            </div>
           </form>
         </div>
       </div>
@@ -259,7 +264,7 @@ export default function Search() {
         {loading ? (
           <div className="flex justify-center py-20 animate-pulse text-indigo-600 font-bold">Loading...</div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-8">
             {results.map((movie) => {
               const isTV = movie.media_type === 'tv';
               const displayTitle = isTV ? movie.name : movie.title;
@@ -271,17 +276,17 @@ export default function Search() {
                 onClick={() => navigate(routePath)}
                 className="group cursor-pointer"
               >
-                <div className="relative aspect-[2/3] rounded-[2rem] overflow-hidden mb-4 shadow-sm transition-all duration-500 hover:shadow-2xl hover:-translate-y-2">
+                <div className="relative aspect-[2/3] rounded-xl sm:rounded-[2rem] overflow-hidden mb-2 sm:mb-4 shadow-sm transition-all duration-500 hover:shadow-2xl hover:-translate-y-2">
                   <img
                     src={movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : "https://via.placeholder.com/500x750"}
                     alt={displayTitle}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                 </div>
-                <h2 className={`font-bold truncate transition-colors ${darkMode ? 'text-gray-200 group-hover:text-indigo-400' : 'text-gray-900 group-hover:text-indigo-600'}`}>{displayTitle}</h2>
-                <div className="flex items-center gap-2 mt-1">
-                  <img src={star} alt="star" className="w-3 h-3" />
-                  <p className={`text-sm ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>{movie.vote_average.toFixed(1)}</p>
+                <h2 className={`font-bold truncate text-xs sm:text-base transition-colors ${darkMode ? 'text-gray-200 group-hover:text-indigo-400' : 'text-gray-900 group-hover:text-indigo-600'}`}>{displayTitle}</h2>
+                <div className="flex items-center gap-1 sm:gap-2 mt-0.5 sm:mt-1">
+                  <img src={star} alt="star" className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                  <p className={`text-[10px] sm:text-sm ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>{movie.vote_average.toFixed(1)}</p>
                 </div>
               </div>
             );

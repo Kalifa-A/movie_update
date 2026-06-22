@@ -1,37 +1,42 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-// Updated SERVERS with dynamic type and ID handling
+// Updated SERVERS with 5 dynamic secure streaming servers
 const SERVERS = [
-    { 
-    id: 'streamimdb', 
-    label: 'Server 1', 
-    // Uses imdbId (tt...) instead of tmdbId
-    url: (imdbId, type, t) => `https://streamimdb.ru/embed/${type}/${imdbId}${t > 0 ? `?t=${t}` : ''}` 
-  },
-  { 
-    id: 'vidsrc', 
-    label: 'Server 2', 
+   { 
+    id: 'vidsrc_pm', 
+    label: 'Server 1 (VidSrc.pm)', 
     url: (id, type, t) => `https://vidsrc.pm/embed/${type}/${id}${t > 0 ? `?t=${t}` : ''}` 
   },
 
+  { 
+    id: 'vidsrc_me', 
+    label: 'Server 2 (VidSrc.me)', 
+    url: (id, type) => `https://vidsrc.me/embed/${type}/${id}` 
+  },
+  { 
+    id: 'streamimdb', 
+    label: 'Server 3 (StreamIMDb)', 
+    url: (id, type) => `https://streamimdb.ru/embed/${type}/${id}` 
+  },
 ];
-
 export default function MoviePlayer({ tmdbId }) {
-  const [server, setServer] = useState('streamimdb');
+  const [server, setServer] = useState('vidsrc_pm');
   const [currentTime, setCurrentTime] = useState(0);
   const [iframeKey, setIframeKey] = useState(0);
   const [imdbId, setImdbId] = useState(null);
   const [mediaType, setMediaType] = useState('movie'); // default to movie
+  const [showDropdown, setShowDropdown] = useState(false);
+  
   const playerContainerRef = useRef(null);
   const iframeRef = useRef(null);
+  const dropdownRef = useRef(null);
 
   const API_KEY = import.meta.env.VITE_API_ID;
 
-  // 1. Fetch External IDs and Media Info to get the real IMDb ID and Type
+  // Fetch External IDs and Media Info to get the real IMDb ID and Type
   useEffect(() => {
     const fetchMovieDetails = async () => {
       try {
-        // We check both movie and tv endpoints to see which one returns data
         const movieRes = await fetch(`https://api.themoviedb.org/3/movie/${tmdbId}?api_key=${API_KEY}`);
         let data = await movieRes.json();
         let type = 'movie';
@@ -56,6 +61,17 @@ export default function MoviePlayer({ tmdbId }) {
     if (tmdbId) fetchMovieDetails();
   }, [tmdbId, API_KEY]);
 
+  // Click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   useEffect(() => {
     setIframeKey((k) => k + 1);
   }, [server, currentTime, imdbId]);
@@ -76,14 +92,9 @@ export default function MoviePlayer({ tmdbId }) {
     }
   };
 
-  const currentServer = SERVERS.find((s) => s.id === server);
-  
-  // Choose which ID to send based on what the server prefers
-  // Server 1 (vidsrc) usually takes TMDB, Server 2 (streamimdb) usually takes IMDb
+  const currentServer = SERVERS.find((s) => s.id === server) || SERVERS[0];
   const activeId = server === 'streamimdb' ? imdbId : tmdbId;
-  
-  // Show nothing until we have the IDs ready to prevent loading "Wednesday" by accident
-  const iframeSrc = activeId ? currentServer.url(activeId, mediaType, currentTime) : "";
+  const iframeSrc = activeId ? currentServer.url(activeId, mediaType) : "";
 
   if (!activeId && server === 'streamimdb') return (
     <div className="aspect-video flex items-center justify-center bg-black rounded-[2rem]">
@@ -110,28 +121,47 @@ export default function MoviePlayer({ tmdbId }) {
         </div>
 
         <div className="flex flex-wrap items-center gap-4">
-          <div className="flex bg-zinc-900/50 p-1 rounded-2xl border border-zinc-800/50 backdrop-blur-sm">
-            {SERVERS.map((s) => (
-              <button
-                key={s.id}
-                onClick={() => {
-                  setServer(s.id);
-                  setCurrentTime(0);
-                }}
-                className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${
-                  server === s.id
-                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
-                    : 'text-zinc-500 hover:text-zinc-200'
-                }`}
-              >
-                {s.label}
-              </button>
-            ))}
+          
+          {/* Server Selector Dropdown */}
+          <div className="relative z-50" ref={dropdownRef}>
+            <button
+              onClick={() => setShowDropdown(!showDropdown)}
+              className="px-6 py-3 bg-zinc-900 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl border border-zinc-800 transition-all hover:bg-zinc-800 active:scale-95 flex items-center gap-2 cursor-pointer shadow-md"
+            >
+              <span>{currentServer.label}</span>
+              <svg xmlns="http://www.w3.org/2500/svg" className={`w-3.5 h-3.5 opacity-70 transition-transform duration-300 ${showDropdown ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+
+            {/* Dropdown Options List */}
+            {showDropdown && (
+              <div className="absolute left-0 mt-2 z-50 rounded-2xl bg-[#0d0d0d] border border-zinc-800/80 p-1.5 shadow-[0_20px_50px_rgba(0,0,0,0.7)] min-w-[200px] animate-in fade-in slide-in-from-top-2 duration-200">
+                {SERVERS.map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() => {
+                      setServer(s.id);
+                      setCurrentTime(0);
+                      setShowDropdown(false);
+                    }}
+                    className={`w-full text-left px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-200 cursor-pointer flex items-center justify-between ${
+                      server === s.id
+                        ? 'bg-indigo-600 text-white shadow-md'
+                        : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900'
+                    }`}
+                  >
+                    <span>{s.label}</span>
+                    {server === s.id && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           <button
             onClick={toggleFullscreen}
-            className="group px-6 py-3 bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-[10px] font-black uppercase tracking-widest rounded-2xl border border-zinc-800 transition-all active:scale-95 flex items-center gap-2"
+            className="group px-6 py-3 bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-[10px] font-black uppercase tracking-widest rounded-2xl border border-zinc-800 transition-all active:scale-95 flex items-center gap-2 cursor-pointer"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 opacity-70 group-hover:opacity-100 transition-opacity" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
@@ -141,7 +171,7 @@ export default function MoviePlayer({ tmdbId }) {
 
           <button
             onClick={handleFocusMode}
-            className="group px-6 py-3 bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-[10px] font-black uppercase tracking-widest rounded-2xl border border-zinc-800 transition-all active:scale-95 flex items-center gap-3"
+            className="group px-6 py-3 bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-[10px] font-black uppercase tracking-widest rounded-2xl border border-zinc-800 transition-all active:scale-95 flex items-center gap-3 cursor-pointer"
           >
             <div className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -153,7 +183,7 @@ export default function MoviePlayer({ tmdbId }) {
       </div>
 
       {/* PLAYER CONTAINER */}
-      <div className="relative w-full max-w-6xl group">
+      <div className="relative w-full max-w-6xl group animate-fade-in-stable">
         <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-[2.2rem] blur-2xl opacity-0 group-hover:opacity-100 transition duration-1000"></div>
         
         <div 
@@ -173,6 +203,7 @@ export default function MoviePlayer({ tmdbId }) {
             allowFullScreen
             referrerPolicy="no-referrer"
             allow="autoplay; encrypted-media; fullscreen"
+            sandbox="allow-scripts allow-same-origin allow-forms"
             className="absolute inset-0 w-full h-full border-0 z-0"
           />
 

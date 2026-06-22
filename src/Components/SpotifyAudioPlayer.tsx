@@ -1,11 +1,9 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
-import YouTube from 'react-youtube';
-import { useYouTubeAudio } from '../Hooks/useYouTubeAudio';
+import { useSpotifyAudio } from '../Hooks/useSpotifyAudio';
 import { SoundtrackTrack } from '../services/soundtrackService';
 
-interface YouTubeAudioPlayerProps {
+interface SpotifyAudioPlayerProps {
   track: SoundtrackTrack | null;
   onNext: () => void;
   onPrevious: () => void;
@@ -13,7 +11,7 @@ interface YouTubeAudioPlayerProps {
   darkMode?: boolean;
 }
 
-const YouTubeAudioPlayer: React.FC<YouTubeAudioPlayerProps> = ({ track, onNext, onPrevious, className = '', darkMode = true }) => {
+const SpotifyAudioPlayer: React.FC<SpotifyAudioPlayerProps> = ({ track, onNext, onPrevious, className = '', darkMode = true }) => {
   const {
     playing,
     duration,
@@ -21,14 +19,13 @@ const YouTubeAudioPlayer: React.FC<YouTubeAudioPlayerProps> = ({ track, onNext, 
     volume,
     muted,
     repeat,
-    onReady,
-    onStateChange,
+    audioRef,
     togglePlay,
     seek,
     setVolume,
     toggleMute,
     toggleRepeat,
-  } = useYouTubeAudio(track?.videoId, onNext);
+  } = useSpotifyAudio(track?.audioUrl, onNext);
 
   if (!track) return null;
 
@@ -39,15 +36,6 @@ const YouTubeAudioPlayer: React.FC<YouTubeAudioPlayerProps> = ({ track, onNext, 
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const opts = {
-    height: '0',
-    width: '0',
-    playerVars: {
-      autoplay: 1,
-      controls: 0,
-    },
-  } as const;
-
   return (
     <motion.div 
       initial={{ y: 100, opacity: 0 }}
@@ -56,10 +44,7 @@ const YouTubeAudioPlayer: React.FC<YouTubeAudioPlayerProps> = ({ track, onNext, 
         darkMode ? 'bg-gray-900/90 border-gray-800 text-white shadow-indigo-500/10' : 'bg-white/90 border-gray-200 text-gray-900 shadow-indigo-200/20'
       } ${className}`}
     >
-      {/* Hidden YouTube Embed */}
-      <div className="hidden">
-        <YouTube videoId={track.videoId} opts={opts} onReady={onReady} onStateChange={onStateChange} />
-      </div>
+      <audio ref={audioRef} src={track.audioUrl} preload="auto" />
 
       <div className="flex flex-col md:flex-row items-center gap-6">
         {/* Track Info */}
@@ -75,7 +60,7 @@ const YouTubeAudioPlayer: React.FC<YouTubeAudioPlayerProps> = ({ track, onNext, 
           <div className="overflow-hidden">
             <h4 className="font-black truncate text-lg tracking-tight">{track.title}</h4>
             <div className="flex items-center gap-2">
-                <span className={`text-[10px] font-black px-1.5 py-0.5 rounded uppercase ${darkMode ? 'bg-indigo-500/20 text-indigo-400' : 'bg-indigo-100 text-indigo-600'}`}>Official</span>
+                <span className={`text-[10px] font-black px-1.5 py-0.5 rounded uppercase ${darkMode ? 'bg-green-500/20 text-green-400' : 'bg-green-100 text-green-600'}`}>Spotify</span>
                 <p className={`text-xs font-bold truncate ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{track.artist}</p>
             </div>
           </div>
@@ -84,7 +69,7 @@ const YouTubeAudioPlayer: React.FC<YouTubeAudioPlayerProps> = ({ track, onNext, 
         {/* Controls */}
         <div className="flex flex-col items-center gap-3 flex-1 w-full max-w-sm">
           <div className="flex items-center gap-8">
-            <button onClick={toggleRepeat} aria-label="Toggle Repeat" className={`transition-all hover:scale-110 active:scale-90 ${repeat ? 'text-indigo-500' : (darkMode ? 'text-gray-600' : 'text-gray-300')}`}>
+            <button onClick={toggleRepeat} aria-label="Toggle Repeat" className={`transition-all hover:scale-110 active:scale-90 ${repeat ? 'text-green-500' : (darkMode ? 'text-gray-600' : 'text-gray-300')}`}>
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
             </button>
             
@@ -95,7 +80,7 @@ const YouTubeAudioPlayer: React.FC<YouTubeAudioPlayerProps> = ({ track, onNext, 
             <button 
               onClick={togglePlay}
               aria-label={playing ? "Pause" : "Play"}
-              className="w-14 h-14 bg-indigo-600 rounded-full flex items-center justify-center hover:bg-indigo-700 hover:scale-110 active:scale-95 transition-all shadow-[0_10px_25px_-5px_rgba(79,70,229,0.5)]"
+              className="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center hover:bg-green-600 hover:scale-110 active:scale-95 transition-all shadow-[0_10px_25px_-5px_rgba(34,197,94,0.5)]"
             >
               {playing ? (
                 <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
@@ -122,7 +107,7 @@ const YouTubeAudioPlayer: React.FC<YouTubeAudioPlayerProps> = ({ track, onNext, 
                 seek(percent * duration);
             }}>
                 <motion.div 
-                    className="absolute inset-y-0 left-0 bg-indigo-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]"
+                    className="absolute inset-y-0 left-0 bg-green-500 rounded-full shadow-[0_0_10px_rgba(34,197,94,0.5)]"
                     style={{ width: `${(currentTime / (duration || 1)) * 100}%` }}
                 />
                 <div className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity" style={{ left: `calc(${(currentTime / (duration || 1)) * 100}% - 6px)` }} />
@@ -148,7 +133,7 @@ const YouTubeAudioPlayer: React.FC<YouTubeAudioPlayerProps> = ({ track, onNext, 
             value={muted ? 0 : volume / 100} 
             onChange={(e) => setVolume(parseFloat(e.target.value))}
             aria-label="Volume Control"
-            className="w-20 accent-indigo-500 h-1 rounded-full bg-gray-500/20 cursor-pointer"
+            className="w-20 accent-green-500 h-1 rounded-full bg-gray-500/20 cursor-pointer"
           />
         </div>
       </div>
@@ -156,4 +141,4 @@ const YouTubeAudioPlayer: React.FC<YouTubeAudioPlayerProps> = ({ track, onNext, 
   );
 };
 
-export default YouTubeAudioPlayer;
+export default SpotifyAudioPlayer;

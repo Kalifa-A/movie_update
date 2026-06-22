@@ -4,7 +4,6 @@ import searchIcon from "../assets/search.png"
 import { useDarkMode } from "../Context/DarkModeContext"
 
 export const Header = () => {
-  const [open, setOpen] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
   const navRef = useRef(null)
@@ -163,31 +162,27 @@ export const Header = () => {
             </button>
           )}
 
-          {/* Mobile Toggle */}
-          <button className="md:hidden p-2" onClick={() => setOpen(!open)}>
-            <div className="space-y-1.5">
-              <span className={`block w-6 h-0.5 transition-all ${darkMode ? 'bg-white' : 'bg-gray-900'} ${open ? "rotate-45 translate-y-2" : ""}`}></span>
-              <span className={`block w-6 h-0.5 ${darkMode ? 'bg-white' : 'bg-gray-900'} ${open ? "opacity-0" : ""}`}></span>
-              <span className={`block w-6 h-0.5 transition-all ${darkMode ? 'bg-white' : 'bg-gray-900'} ${open ? "-rotate-45 -translate-y-2" : ""}`}></span>
-            </div>
-          </button>
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      <div className={`md:hidden overflow-hidden transition-all duration-500 backdrop-blur-xl ${darkMode ? 'bg-gray-900/95' : 'bg-white/95'} ${open ? "max-h-96 border-t" : "max-h-0"}`}>
-        <div className="p-6 space-y-4">
-          {links.map((link) => (
-            <NavLink key={link.to} to={link.to} onClick={() => setOpen(false)} className={`block text-lg font-bold ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
-              {link.label}
-            </NavLink>
-          ))}
-          {!token && (
-            <button onClick={() => { navigate("/auth"); setOpen(false); }} className="w-full py-3 bg-indigo-600 text-white font-bold rounded-2xl">
-              Sign In
-            </button>
-          )}
-        </div>
+      {/* Mobile Scrollable Nav */}
+      <div className={`md:hidden overflow-x-auto scrollbar-hide border-t flex items-center gap-2 px-4 py-3 transition-colors duration-500 ${darkMode ? 'border-gray-800/50 bg-gray-900/95' : 'border-gray-100/50 bg-white/95'}`}>
+        {links.map((link) => (
+          <NavLink
+            key={link.to}
+            to={link.to}
+            className={({ isActive }) => 
+              `px-4 py-1.5 text-sm font-bold whitespace-nowrap transition-colors duration-500 rounded-full
+              ${isActive 
+                ? "text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30" 
+                : darkMode 
+                  ? "text-gray-400 hover:text-white hover:bg-gray-800" 
+                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"}`
+            }
+          >
+            {link.label}
+          </NavLink>
+        ))}
       </div>
     </header>
   )

@@ -23,6 +23,8 @@ export default function MovieDetail() {
   const [trailerKey, setTrailerKey] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showPlayer, setShowPlayer] = useState(false);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [reviews, setReviews] = useState([]);
   const { darkMode } = useDarkMode()
   const playerSectionRef = useRef(null);
 
@@ -30,79 +32,102 @@ export default function MovieDetail() {
   const isTV = location.pathname.startsWith('/tv/');
   const mediaType = isTV ? 'tv' : 'movie';
 
-  const API_KEY = import.meta.env.VITE_TMDB_KEY
-const addToWatchlist = async () => {
-  if (!movie || isAdding) return;
-  const token = localStorage.getItem('token');
+  const API_KEY = import.meta.env.VITE_TMDB_KEY || import.meta.env.VITE_API_ID;
 
-  if (!token) {
-    alert("Please login first!");
-    navigate('/auth');
-    return;
-  }
+  const saveToContinueWatching = (movieData, type) => {
+    try {
+      const list = JSON.parse(localStorage.getItem('continue_watching') || '[]');
+      const newItem = {
+        id: movieData.id,
+        title: movieData.title || movieData.name,
+        poster_path: movieData.poster_path,
+        vote_average: movieData.vote_average,
+        media_type: type,
+        timestamp: Date.now()
+      };
+      // Filter out duplicate instances of this item
+      const filteredList = list.filter(item => !(item.id === newItem.id && item.media_type === newItem.media_type));
+      // Prepend new item and keep top 10
+      const updatedList = [newItem, ...filteredList].slice(0, 10);
+      localStorage.setItem('continue_watching', JSON.stringify(updatedList));
+    } catch (err) {
+      console.error("Error logging continue watching:", err);
+    }
+  };
 
-  // --- THE FIX STARTS HERE ---
-  // This tells the app: "Use the live URL from Vercel, but if that's missing, use localhost"
-  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-  
-  setIsAdding(true);
+  const addToWatchlist = async () => {
+    if (!movie || isAdding) return;
+    const token = localStorage.getItem('token');
 
-  try {
-    const movieData = {
-      movieId: movie.id,
-      title: movie.title,
-      poster_path: movie.poster_path,
-      vote_average: movie.vote_average
-    };
+    if (!token) {
+      alert("Please login first!");
+      navigate('/auth');
+      return;
+    }
 
-    const response = await axios.post(
-      `${API_BASE}/watchlist`, 
-      movieData, 
-      {
-        headers: { 'x-auth-token': token } 
+    // --- THE FIX STARTS HERE ---
+    // This tells the app: "Use the live URL from Vercel, but if that's missing, use localhost"
+    const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    
+    setIsAdding(true);
+
+    try {
+      const movieData = {
+        movieId: movie.id,
+        title: movie.title,
+        poster_path: movie.poster_path,
+        vote_average: movie.vote_average
+      };
+
+      const response = await axios.post(
+        `${API_BASE}/watchlist`, 
+        movieData, 
+        {
+          headers: { 'x-auth-token': token } 
+        }
+      );
+    // --- THE FIX ENDS HERE ---
+
+      if (response.status === 201) {
+        alert("Added to Watchlist!");
       }
-    );
-  // --- THE FIX ENDS HERE ---
-
-    if (response.status === 201) {
-      alert("Added to Watchlist!");
+    } catch (err) {
+      console.log("Error Response:", err.response?.data);
+      alert(err.response?.data?.message || "Error adding movie");
+    } finally {
+      setIsAdding(false);
     }
-  } catch (err) {
-    console.log("Error Response:", err.response?.data);
-    alert(err.response?.data?.message || "Error adding movie");
-  } finally {
-    setIsAdding(false);
-  }
-};
-const getTrailer = async (id) => {
-  try {
-    const res = await axios.get(
-      `https://api.themoviedb.org/3/${mediaType}/${id}/videos?api_key=${API_KEY}`
-    );
-    // Look for a YouTube video labeled 'Trailer'
-    const trailer = res.data.results.find(
-      (vid) => vid.type === "Trailer" && vid.site === "YouTube"
-    );
-    if (trailer) {
-      setTrailerKey(trailer.key);
-      setShowModal(true);
-    } else {
-      alert("No trailer available for this title.");
+  };
+  const getTrailer = async (id) => {
+    try {
+      const res = await axios.get(
+        `https://api.themoviedb.org/3/${mediaType}/${id}/videos?api_key=${API_KEY}`
+      );
+      // Look for a YouTube video labeled 'Trailer'
+      const trailer = res.data.results.find(
+        (vid) => vid.type === "Trailer" && vid.site === "YouTube"
+      );
+      if (trailer) {
+        setTrailerKey(trailer.key);
+        setShowModal(true);
+      } else {
+        alert("No trailer available for this title.");
+      }
+    } catch (err) {
+      console.error("Error fetching trailer", err);
     }
-  } catch (err) {
-    console.error("Error fetching trailer", err);
-  }
-};
+  };
 
   useEffect(() => {
     const fetchMovieData = async () => {
       try {
         setLoading(true)
         // Fetch Details, Credits, and Recommendations in one go
-        const [movieRes, creditsRes, relatedRes] = await Promise.all([
+        const [movieRes, creditsRes, relatedRes, reviewsRes] = await Promise.all([
           fetch(`https://api.themoviedb.org/3/${mediaType}/${id}?api_key=${API_KEY}`),
           fetch(`https://api.themoviedb.org/3/${mediaType}/${id}/credits?api_key=${API_KEY}`),
-          fetch(`https://api.themoviedb.org/3/${mediaType}/${id}/recommendations?api_key=${API_KEY}`)
+          fetch(`https://api.themoviedb.org/3/${mediaType}/${id}/recommendations?api_key=${API_KEY}`),
+          fetch(`https://api.themoviedb.org/3/${mediaType}/${id}/reviews?api_key=${API_KEY}`)
         ])
 
         if (!movieRes.ok) throw new Error('Failed to fetch data')
@@ -110,10 +135,15 @@ const getTrailer = async (id) => {
         const movieData = await movieRes.json()
         const creditsData = await creditsRes.json()
         const relatedData = await relatedRes.json()
+        const reviewsData = reviewsRes.ok ? await reviewsRes.json() : { results: [] }
 
         setMovie(movieData)
         setCast(creditsData.cast.slice(0, 10))
         setRelated(relatedData.results.slice(0, 4)) // Show top 4 recommendations
+        setReviews(reviewsData.results.slice(0, 3)) // Get top 3 reviews
+
+        // Log to Continue Watching
+        saveToContinueWatching(movieData, mediaType);
       } catch (err) {
         setError(err.message)
       } finally {
@@ -133,7 +163,7 @@ const getTrailer = async (id) => {
   
   if (error) return <div className="min-h-screen flex items-center justify-center text-red-500">{error}</div>
 
-  const backdrop = movie.backdrop_path ? `https://image.tmdb.org/t/p/original${movie.backdrop_path}` : null
+  const backdrop = movie.backdrop_path ? `https://image.tmdb.org/t/p/w1280${movie.backdrop_path}` : null
   const poster = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : null
 
 return (
@@ -141,39 +171,27 @@ return (
     
     {/* 1. HERO BACKDROP SECTION */}
     <div ref={playerSectionRef} className={`relative w-full overflow-hidden bg-black transition-all duration-700 ${showPlayer ? 'h-[100vh]' : 'h-[60vh] md:h-[65vh]'}`}>
-      <AnimatePresence mode="wait">
         {showPlayer ? (
-          <motion.div 
-            key="player"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.8 }}
-            className="absolute inset-0 w-full h-full z-20 bg-black pt-16 pb-8 px-4"
-          >
+          <div className="absolute inset-0 w-full h-full z-20 bg-black pt-16 pb-8 px-4">
             <MoviePlayer tmdbId={movie.id} />
-          </motion.div>
+          </div>
         ) : (
-          backdrop && (
-            <motion.div
-              key="backdrop"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.8 }}
-              className="absolute inset-0 w-full h-full"
-            >
+          <div className="absolute inset-0 w-full h-full bg-black">
+            {backdrop && (
               <img
                 src={backdrop}
                 alt="backdrop"
-                className="absolute inset-0 w-full h-full object-cover scale-110 md:scale-105 animate-slow-zoom"
+                onLoad={() => setIsImageLoaded(true)}
+                className={`absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)] max-w-none object-cover transition-opacity duration-1000 ${
+                  isImageLoaded ? 'opacity-100 animate-cinematic-fade' : 'opacity-0'
+                }`}
               />
-              {/* Mobile-optimized gradient bleed */}
-              <div className={`absolute inset-0 bg-gradient-to-t ${darkMode ? 'from-gray-950 via-gray-950/40' : 'from-[#fbfbfd] via-[#fbfbfd]/40'} to-black/40`} />
-            </motion.div>
-          )
+            )}
+            
+            {/* Overlay - now slightly more opaque to ensure text contrast during fade */}
+            <div className={`absolute inset-0 bg-gradient-to-t ${darkMode ? 'from-gray-950 via-gray-950/60' : 'from-[#fbfbfd] via-[#fbfbfd]/60'} to-transparent`} />
+          </div>
         )}
-      </AnimatePresence>
     </div>
 
     {/* 2. MAIN CONTENT CONTAINER */}
@@ -241,7 +259,11 @@ return (
   
   <div className="flex gap-6 overflow-x-auto pb-6 scrollbar-hide snap-x">
     {cast && cast.map((person) => (
-      <div key={person.id} className="text-center shrink-0 group snap-start">
+      <div 
+        key={person.id} 
+        onClick={() => navigate(`/person/${person.id}`)}
+        className="text-center shrink-0 group snap-start cursor-pointer"
+      >
         {/* Avatar Circle */}
         <div className={`w-16 h-16 md:w-20 md:h-20 mx-auto mb-4 rounded-full overflow-hidden shadow-md border-2 transition-all duration-500 group-hover:scale-110 ${darkMode ? 'border-gray-700 group-hover:shadow-indigo-900/30 group-hover:border-indigo-800' : 'border-white group-hover:shadow-indigo-100 group-hover:border-indigo-50'}`}>
           <img 
@@ -411,6 +433,60 @@ return (
 
   </div>
 </div>
+
+      {/* COMMUNITY REVIEWS SECTION */}
+      <div className="mt-16 md:mt-24">
+        <h2 className="text-3xl md:text-4xl font-extrabold tracking-tighter mb-8 md:mb-12">
+          Community <span className="text-indigo-600">Reviews.</span>
+        </h2>
+        
+        {reviews && reviews.length > 0 ? (
+          <div className="grid grid-cols-1 gap-6">
+            {reviews.map((rev) => (
+              <div 
+                key={rev.id} 
+                className={`p-6 md:p-8 rounded-[2rem] border backdrop-blur-2xl shadow-sm transition-all duration-300 ${
+                  darkMode 
+                    ? 'bg-gray-900/40 border-gray-800 text-gray-200' 
+                    : 'bg-white/60 border-gray-100 text-gray-800'
+                }`}
+              >
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-lg uppercase shrink-0 overflow-hidden">
+                    {rev.author_details?.avatar_path ? (
+                      <img 
+                        src={rev.author_details.avatar_path.startsWith('/http') 
+                          ? rev.author_details.avatar_path.slice(1) 
+                          : `https://image.tmdb.org/t/p/w150${rev.author_details.avatar_path}`}
+                        alt={rev.author}
+                        className="w-full h-full object-cover rounded-full"
+                      />
+                    ) : (
+                      rev.author.charAt(0)
+                    )}
+                  </div>
+                  <div>
+                    <h4 className="font-extrabold text-sm md:text-base uppercase tracking-tight">{rev.author}</h4>
+                    {rev.author_details?.rating && (
+                      <div className="flex items-center gap-1 mt-0.5">
+                        <img src={star} alt="star" className="w-3 h-3" />
+                        <span className="text-xs font-bold text-indigo-500">{rev.author_details.rating} / 10</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <p className={`text-sm md:text-base leading-relaxed font-medium line-clamp-4 hover:line-clamp-none transition-all duration-300 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                  {rev.content}
+                </p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className={`text-center py-10 font-bold ${darkMode ? 'text-gray-600' : 'text-gray-400'}`}>
+            No reviews yet. Be the first to share your thoughts!
+          </p>
+        )}
+      </div>
 
       {/* 3. SOUNDTRACK SECTION */}
       <SoundtrackSection 

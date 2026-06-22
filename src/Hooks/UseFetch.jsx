@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-export default function useFetch(api_path) {
+export default function useFetch(api_path, type = 'movie', page = 1) {
     const [data, setData] = useState(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
@@ -25,7 +25,7 @@ export default function useFetch(api_path) {
         setLoading(true)
         setError(null)
 
-        const url = `https://api.themoviedb.org/3/movie/${api_path}?language=en-US&page=1&api_key=${API_KEY}`
+        const url = `https://api.themoviedb.org/3/${type}/${api_path}?language=en-US&page=${page}&api_key=${API_KEY}`
 
         fetch(url, { signal: controller.signal })
             .then((res) => {
@@ -43,7 +43,7 @@ export default function useFetch(api_path) {
             })
 
         return () => controller.abort()
-    }, [api_path]) // re-fetch when api_path changes
+    }, [api_path, type, page]) // re-fetch when api_path, type, or page changes
 
     return { data, loading, error }
 }

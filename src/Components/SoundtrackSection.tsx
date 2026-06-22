@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getSoundtracks, SoundtrackTrack } from '../services/soundtrackService';
-import YouTubeAudioPlayer from './YouTubeAudioPlayer';
+import SpotifyAudioPlayer from './SpotifyAudioPlayer';
 
 interface SoundtrackSectionProps {
   movieTitle: string;
@@ -118,7 +118,7 @@ const SoundtrackSection: React.FC<SoundtrackSectionProps> = ({ movieTitle, year,
         )}
       </div>
 
-      <YouTubeAudioPlayer 
+      <SpotifyAudioPlayer 
         track={activeTrackIndex !== null ? tracks[activeTrackIndex] : null} 
         onNext={handleNext}
         onPrevious={handlePrevious}
