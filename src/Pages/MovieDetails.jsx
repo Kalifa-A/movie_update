@@ -170,8 +170,8 @@ export default function MovieDetail() {
   const backdrop = movie.backdrop_path ? `https://image.tmdb.org/t/p/w1280${movie.backdrop_path}` : null
   const poster = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : null
 
-return (
-  <div className={`min-h-screen overflow-x-hidden font-sans pb-20 md:pb-0 transition-colors duration-500 ${darkMode ? 'bg-gray-950 text-gray-100' : 'bg-[#fbfbfd] text-gray-900'}`}>
+  return (
+  <div className={`min-h-screen overflow-x-hidden font-sans pb-48 md:pb-0 transition-colors duration-500 ${darkMode ? 'bg-gray-950 text-gray-100' : 'bg-[#fbfbfd] text-gray-900'}`}>
     
     {/* 1. HERO BACKDROP SECTION */}
     <div ref={playerSectionRef} className={`relative w-full overflow-hidden bg-black transition-all duration-700 ${showPlayer ? 'h-[100vh]' : 'h-[60vh] md:h-[65vh]'}`}>
@@ -375,68 +375,117 @@ return (
       </div>
 
       {/* MOBILE STICKY BOTTOM BAR */}
-<div className={`fixed bottom-0 left-0 right-0 p-5 pb-8 backdrop-blur-2xl border-t z-50 md:hidden transition-colors duration-500 ${
-  darkMode 
-    ? 'bg-gray-950/80 border-white/5 shadow-[0_-20px_40px_rgba(0,0,0,0.4)]' 
-    : 'bg-white/80 border-gray-100 shadow-[0_-10px_30px_rgba(0,0,0,0.05)]'
-}`}>
-  <div className="max-w-md mx-auto flex items-center gap-3">
-    
-    {/* PRIMARY ACTION: WATCH NOW */}
-    <button 
-      onClick={() => {
-        const turningOn = !showPlayer;
-        setShowPlayer(turningOn);
-        if (turningOn) {
-          setTimeout(() => {
-            playerSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }, 100);
-        }
-      }}
-      className={`relative flex-[2] flex items-center justify-center gap-3 py-4 rounded-2xl font-black text-sm tracking-tight transition-all duration-300 active:scale-95 ${
-        showPlayer 
-          ? 'bg-red-500/10 text-red-500 border border-red-500/20' 
-          : 'bg-indigo-600 text-white shadow-[0_10px_25px_-5px_rgba(79,70,229,0.4)]'
-      }`}
-    >
-      <img 
-        src={showPlayer ? close : play} 
-        alt="icon" 
-        className={`w-4 h-4 ${!showPlayer && 'invert'}`} 
-      />
-      {showPlayer ? "CLOSE PLAYER" : "WATCH NOW"}
-    </button>
+      <div className={`fixed bottom-[112px] left-1/2 -translate-x-1/2 w-[92%] max-w-[380px] z-[90] md:hidden transition-all duration-500`}>
+        <div className={`flex items-center justify-between p-2 pb-3 rounded-[2rem] border shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-colors duration-500 backdrop-blur-2xl ${
+          darkMode 
+            ? 'bg-black/85 border-zinc-800/80 shadow-black' 
+            : 'bg-white/90 border-gray-200/80'
+        }`}>
+          
+          {/* ACTION: WATCH NOW */}
+          <button 
+            onClick={() => {
+              const turningOn = !showPlayer;
+              setShowPlayer(turningOn);
+              if (turningOn) {
+                setTimeout(() => {
+                  playerSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+              }
+            }}
+            className="w-1/3 flex flex-col items-center z-10 transition-all duration-300 active:scale-90 cursor-pointer"
+          >
+            <div className={`relative w-11 h-11 flex items-center justify-center transition-all duration-300 scale-110 ${
+              showPlayer 
+                ? 'text-red-500 bg-red-500/15 border border-red-500/35 shadow-lg shadow-red-500/10 animate-liquid-play-wobble' 
+                : 'bg-gradient-to-br from-rose-500/25 to-purple-600/10 dark:from-rose-500/15 dark:to-transparent border border-rose-400/40 shadow-[0_8px_25px_rgba(244,63,94,0.35),-2.5px_-2.5px_6px_rgba(244,63,94,0.4),2.5px_2.5px_6px_rgba(168,85,247,0.4),inset_0_4px_8px_rgba(255,255,255,0.45),inset_0_-4px_8px_rgba(0,0,0,0.1)] animate-liquid-play-wobble text-rose-500 dark:text-rose-400'
+            }`}>
+              {showPlayer ? (
+                <span className="text-[10px] font-bold">✕</span>
+              ) : (
+                <>
+                  {/* Light Reflection Highlight for Water Drop */}
+                  <div className="absolute top-1 left-1.5 w-3.5 h-1.5 bg-white/60 rounded-full rotate-[-15deg] blur-[0.2px] pointer-events-none" />
+                  {/* Inner 3D depth overlay */}
+                  <div 
+                    className="absolute inset-0 pointer-events-none" 
+                    style={{ 
+                      background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.25) 0%, transparent 60%)',
+                      borderRadius: 'inherit'
+                    }} 
+                  />
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5.5 h-5.5">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </>
+              )}
+            </div>
+            <span className={`text-[9px] font-black uppercase tracking-wider mt-1 transition-colors duration-300 ${
+              showPlayer 
+                ? 'text-red-500' 
+                : 'text-rose-500 dark:text-rose-400'
+            }`}>
+              {showPlayer ? "Close" : "Watch Now"}
+            </span>
+          </button>
 
+          {/* ACTION: WATCH TRAILER */}
+          <button 
+            onClick={() => getTrailer(movie.id)}
+            className="w-1/3 flex flex-col items-center z-10 transition-all duration-300 active:scale-90 cursor-pointer"
+          >
+            <div className={`relative w-11 h-11 flex items-center justify-center transition-all duration-300 scale-110 bg-gradient-to-br from-cyan-500/25 to-blue-600/10 dark:from-cyan-500/15 dark:to-transparent border border-cyan-400/40 shadow-[0_8px_25px_rgba(6,182,212,0.35),-2.5px_-2.5px_6px_rgba(6,182,212,0.4),2.5px_2.5px_6px_rgba(59,130,246,0.4),inset_0_4px_8px_rgba(255,255,255,0.45),inset_0_-4px_8px_rgba(0,0,0,0.1)] animate-liquid-trailer-wobble text-cyan-600 dark:text-cyan-400`}>
+              {/* Light Reflection Highlight for Water Drop */}
+              <div className="absolute top-1 left-1.5 w-3.5 h-1.5 bg-white/60 rounded-full rotate-[-15deg] blur-[0.2px] pointer-events-none" />
+              {/* Inner 3D depth overlay */}
+              <div 
+                className="absolute inset-0 pointer-events-none" 
+                style={{ 
+                  background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.25) 0%, transparent 60%)',
+                  borderRadius: 'inherit'
+                }} 
+              />
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5.5 h-5.5">
+                <path d="M4.5 4.5A2.25 2.25 0 002.25 6.75v10.5A2.25 2.25 0 004.5 19.5h10.5a2.25 2.25 0 002.25-2.25v-3.375l3.22 3.22a.75.75 0 001.28-.53V6.93a.75.75 0 00-1.28-.53l-3.22 3.22V6.75a2.25 2.25 0 00-2.25-2.25H4.5z" />
+              </svg>
+            </div>
+            <span className="text-[9px] font-black uppercase tracking-wider mt-1 text-cyan-600 dark:text-cyan-400 transition-colors duration-300">
+              Trailer
+            </span>
+          </button>
 
-    {/* SECONDARY ACTION: TRAILER (Icon Based) */}
-    <button 
-      onClick={() => getTrailer(movie.id)}
-      className={`flex-1 flex flex-col items-center justify-center gap-1 py-3 rounded-2xl border transition-all active:scale-90 ${
-        darkMode 
-          ? 'bg-gray-900 border-white/10 text-gray-300' 
-          : 'bg-gray-50 border-gray-200 text-gray-600'
-      }`}
-    >
-      <img src={play} className={`w-4 h-4 ${darkMode ? 'invert opacity-70' : 'opacity-60'}`} alt="play" />
-      <span className="text-[10px] font-black uppercase tracking-tighter">Trailer</span>
-    </button>
+          {/* ACTION: ADD TO WATCHLIST */}
+          <button 
+            onClick={addToWatchlist}
+            disabled={isAdding}
+            className="w-1/3 flex flex-col items-center z-10 transition-all duration-300 active:scale-90 cursor-pointer"
+          >
+            <div className={`relative w-11 h-11 flex items-center justify-center transition-all duration-300 scale-110 bg-gradient-to-br from-amber-500/25 to-orange-600/10 dark:from-amber-500/15 dark:to-transparent border border-amber-400/40 shadow-[0_8px_25px_rgba(245,158,11,0.35),-2.5px_-2.5px_6px_rgba(245,158,11,0.4),2.5px_2.5px_6px_rgba(249,115,22,0.4),inset_0_4px_8px_rgba(255,255,255,0.45),inset_0_-4px_8px_rgba(0,0,0,0.1)] animate-liquid-watchlist-wobble text-amber-600 dark:text-amber-400`}>
+              {/* Light Reflection Highlight for Water Drop */}
+              <div className="absolute top-1 left-1.5 w-3.5 h-1.5 bg-white/60 rounded-full rotate-[-15deg] blur-[0.2px] pointer-events-none" />
+              {/* Inner 3D depth overlay */}
+              <div 
+                className="absolute inset-0 pointer-events-none" 
+                style={{ 
+                  background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.25) 0%, transparent 60%)',
+                  borderRadius: 'inherit'
+                }} 
+              />
+              {isAdding ? (
+                <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                  <path d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.11.893 2.008 2.007 1.937l7.745-.494 7.745.494c1.114.07 2.007-.827 2.007-1.937V3.375C21.25 2.336 20.41 1.5 19.375 1.5H5.625zM12 7.5a.75.75 0 01.75.75v2.25h2.25a.75.75 0 010 1.5h-2.25v2.25a.75.75 0 01-1.5 0v-2.25H9a.75.75 0 010-1.5h2.25V8.25A.75.75 0 0112 7.5z" />
+                </svg>
+              )}
+            </div>
+            <span className="text-[9px] font-black uppercase tracking-wider mt-1 text-amber-600 dark:text-amber-400 transition-colors duration-300">
+              {isAdding ? "Adding" : "Watchlist"}
+            </span>
+          </button>
 
-    {/* SECONDARY ACTION: WATCHLIST (Icon Based) */}
-    <button 
-      onClick={addToWatchlist}
-      disabled={isAdding}
-      className={`flex-1 flex flex-col items-center justify-center gap-1 py-3 rounded-2xl border transition-all active:scale-90 ${
-        darkMode 
-          ? 'bg-gray-900 border-white/10 text-gray-300' 
-          : 'bg-gray-50 border-gray-200 text-gray-600'
-      } ${isAdding ? 'opacity-50' : ''}`}
-    >
-      <span className="text-lg leading-none font-light">{isAdding ? "..." : "+"}</span>
-      <span className="text-[10px] font-black uppercase tracking-tighter">Watchlist</span>
-    </button>
-
-  </div>
-</div>
+        </div>
+      </div>
 
       {/* COMMUNITY REVIEWS SECTION */}
       <div className="mt-16 md:mt-24">

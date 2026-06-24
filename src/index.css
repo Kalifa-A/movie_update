@@ -30,6 +30,51 @@
   animation: liquid-wobble 4s infinite ease-in-out;
 }
 
+@keyframes liquid-play-wobble {
+  0%, 100% {
+    border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
+    transform: scale(1.1) rotate(-5deg);
+  }
+  50% {
+    border-radius: 70% 30% 52% 48% / 60% 40% 60% 40%;
+    transform: scale(1.1) rotate(5deg);
+  }
+}
+.animate-liquid-play-wobble {
+  animation: liquid-play-wobble 4s infinite ease-in-out;
+}
+
+@keyframes liquid-trailer-wobble {
+  0%, 100% {
+    border-radius: 60% 40% 30% 70% / 50% 65% 35% 50%;
+    transform: scale(1.1) rotate(5deg);
+  }
+  50% {
+    border-radius: 30% 70% 70% 30% / 65% 50% 50% 35%;
+    transform: scale(1.1) rotate(-5deg);
+  }
+}
+
+.animate-liquid-trailer-wobble {
+  animation: liquid-trailer-wobble 4.5s infinite ease-in-out;
+}
+
+@keyframes liquid-watchlist-wobble {
+  0%, 100% {
+    border-radius: 35% 65% 60% 40% / 60% 35% 65% 40%;
+    transform: scale(1.1) translateY(1px);
+  }
+  50% {
+    border-radius: 65% 35% 40% 60% / 35% 60% 40% 65%;
+    transform: scale(1.1) translateY(-1px);
+  }
+}
+
+.animate-liquid-watchlist-wobble {
+  animation: liquid-watchlist-wobble 3.5s infinite ease-in-out;
+}
+
+
 /* this for delete glow button*/
 @media (max-width: 768px) {
   .mobile-delete-glow {
