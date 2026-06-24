@@ -183,7 +183,7 @@ export default function MovieList({ api_path, forceType }) {
       <div className="max-w-7xl mx-auto animate-fade-in-stable">
 
         {/* Trending Hero Banner for Now Playing */}
-        {api_path === 'now_playing' && trendingMovies.length > 0 && (
+        {api_path === 'now_playing' && !forceType && trendingMovies.length > 0 && (
           (() => {
             const activeTrendingMovie = trendingMovies[currentTrendingIndex];
             const backdropUrl = activeTrendingMovie?.backdrop_path
@@ -264,10 +264,10 @@ export default function MovieList({ api_path, forceType }) {
         {/* Header */}
         <header className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
-            {api_path !== 'now_playing' && (
+            {(api_path !== 'now_playing' || forceType) && (
               <>
                 <h1 className={`text-5xl md:text-6xl font-bold tracking-tighter transition-colors duration-500 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                  {title}
+                  {forceType === 'movie' ? 'Movies' : forceType === 'tv' ? 'TV Shows' : title}
                 </h1>
                 <p className={`mt-3 text-lg font-medium opacity-80 transition-colors duration-500 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                   Experience the best in entertainment.
