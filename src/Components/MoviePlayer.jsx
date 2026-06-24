@@ -3,14 +3,14 @@ import React, { useState, useEffect, useRef } from 'react';
 // Updated SERVERS with 5 dynamic secure streaming servers
 const SERVERS = [
   { 
-    id: 'streamimdb', 
+    id: 'vidsrc_pm', 
     label: 'Server 1', 
-    url: (id, type) => `https://streamimdb.ru/embed/${type}/${id}` 
+    url: (id, type, t) => `https://vidsrc.pm/embed/${type}/${id}${t > 0 ? `?t=${t}` : ''}` 
   },
   { 
-    id: 'vidsrc_pm', 
+    id: 'streamimdb', 
     label: 'Server 2', 
-    url: (id, type, t) => `https://vidsrc.pm/embed/${type}/${id}${t > 0 ? `?t=${t}` : ''}` 
+    url: (id, type) => `https://streamimdb.ru/embed/${type}/${id}` 
   },
   {
     id: 'mapple',
@@ -43,7 +43,7 @@ const SERVERS = [
   },
 ];
 export default function MoviePlayer({ tmdbId }) {
-  const [server, setServer] = useState('streamimdb');
+  const [server, setServer] = useState('vidsrc_pm');
   const [iframeKey, setIframeKey] = useState(0);
   const [imdbId, setImdbId] = useState(null);
   const [mediaType, setMediaType] = useState('movie'); // default to movie
@@ -98,12 +98,6 @@ export default function MoviePlayer({ tmdbId }) {
   useEffect(() => {
     setIframeKey((k) => k + 1);
   }, [server, imdbId]);
-
-  const handleFocusMode = () => {
-    if (iframeRef.current) {
-      iframeRef.current.focus();
-    }
-  };
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -165,7 +159,6 @@ export default function MoviePlayer({ tmdbId }) {
                     key={s.id}
                     onClick={() => {
                       setServer(s.id);
-                      setCurrentTime(0);
                       setShowDropdown(false);
                     }}
                     className={`w-full text-left px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-200 cursor-pointer flex items-center justify-between ${
@@ -191,17 +184,6 @@ export default function MoviePlayer({ tmdbId }) {
             </svg>
             Fullscreen
           </button>
-
-          <button
-            onClick={handleFocusMode}
-            className="group px-6 py-3 bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-[10px] font-black uppercase tracking-widest rounded-2xl border border-zinc-800 transition-all active:scale-95 flex items-center gap-3 cursor-pointer"
-          >
-            <div className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-            </div>
-            Focus Mode
-          </button>
         </div>
       </div>
 
@@ -220,7 +202,6 @@ export default function MoviePlayer({ tmdbId }) {
             ref={iframeRef}
             key={iframeKey}
             src={iframeSrc}
-            onLoad={handleFocusMode}
             title="Movie Player"
             frameBorder="0"
             allowFullScreen
