@@ -24,6 +24,8 @@ export default function AllRoutes() {
       <main className="flex-grow">
         <Routes>
           <Route path="/" element={<MovieList api_path="now_playing" />} />
+          <Route path="/movies" element={<MovieList api_path="now_playing" forceType="movie" />} />
+          <Route path="/tv" element={<MovieList api_path="now_playing" forceType="tv" />} />
           <Route path="/popular" element={<MovieList api_path="popular" />} />
           <Route path="/top-rated" element={<MovieList api_path="top_rated" />} />
           <Route path="/upcoming" element={<MovieList api_path="upcoming" />} />

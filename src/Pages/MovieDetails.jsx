@@ -141,9 +141,6 @@ export default function MovieDetail() {
         setCast(creditsData.cast.slice(0, 10))
         setRelated(relatedData.results.slice(0, 4)) // Show top 4 recommendations
         setReviews(reviewsData.results.slice(0, 3)) // Get top 3 reviews
-
-        // Log to Continue Watching
-        saveToContinueWatching(movieData, mediaType);
       } catch (err) {
         setError(err.message)
       } finally {
@@ -154,6 +151,13 @@ export default function MovieDetail() {
     // Scroll to top when the movie ID changes
     window.scrollTo(0, 0)
   }, [id, API_KEY, mediaType])
+
+  // Handle Continue Watching when the player is open
+  useEffect(() => {
+    if (showPlayer && movie) {
+      saveToContinueWatching(movie, mediaType);
+    }
+  }, [showPlayer, movie, mediaType]);
 
   if (loading) return (
     <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-950' : 'bg-[#fbfbfd]'}`}>

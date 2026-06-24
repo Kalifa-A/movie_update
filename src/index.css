@@ -17,6 +17,19 @@
   animation: siri-liquid 2s infinite ease-in-out;
 }
 
+@keyframes liquid-wobble {
+  0%, 100% {
+    border-radius: 60% 40% 60% 40% / 40% 60% 40% 60%;
+  }
+  50% {
+    border-radius: 40% 60% 42% 58% / 58% 42% 58% 42%;
+  }
+}
+
+.animate-liquid-wobble {
+  animation: liquid-wobble 4s infinite ease-in-out;
+}
+
 /* this for delete glow button*/
 @media (max-width: 768px) {
   .mobile-delete-glow {

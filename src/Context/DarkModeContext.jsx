@@ -7,6 +7,8 @@ export function DarkModeProvider({ children }) {
     return localStorage.getItem('darkmode') === 'true'
   })
 
+  const [mediaType, setMediaType] = useState('movie')
+
   useEffect(() => {
     localStorage.setItem('darkmode', darkMode)
   }, [darkMode])
@@ -14,7 +16,7 @@ export function DarkModeProvider({ children }) {
   const toggleDarkMode = () => setDarkMode(prev => !prev)
 
   return (
-    <DarkModeContext.Provider value={{ darkMode, toggleDarkMode }}>
+    <DarkModeContext.Provider value={{ darkMode, toggleDarkMode, mediaType, setMediaType }}>
       {children}
     </DarkModeContext.Provider>
   )
