@@ -7,10 +7,12 @@ const SERVERS = [
     label: 'Server 1', 
     url: (id, type, t) => `https://vidsrc.pm/embed/${type}/${id}${t > 0 ? `?t=${t}` : ''}` 
   },
-  { 
-    id: 'streamimdb', 
-    label: 'Server 2', 
-    url: (id, type) => `https://streamimdb.ru/embed/${type}/${id}` 
+   {
+    id: 'vaplayer',
+    label: 'Server 2 (Vaplayer)',
+    url: (id, type, t) => type === 'movie' ? `https://vaplayer.ru/embed/movie/${id}${t > 0 ? `?t=${t}` : ''}` : `https://vaplayer.ru/embed/tv/${id}/1/1${t > 0 ? `?t=${t}` : ''}`,
+    noSandbox: true,
+    referrerPolicy: 'origin'
   },
   {
     id: 'mapple',
@@ -35,11 +37,10 @@ const SERVERS = [
     url: (id, type) => type === 'movie' ? `https://vidlink.pro/movie/${id}` : `https://vidlink.pro/tv/${id}/1/1`,
     noSandbox: true
   },
-  {
-    id: 'embedsu',
-    label: 'Server 7 (Embed.su)',
-    url: (id, type) => type === 'movie' ? `https://embed.su/embed/movie/${id}` : `https://embed.su/embed/tv/${id}/1/1`,
-    noSandbox: true
+   { 
+    id: 'streamimdb', 
+    label: 'Server 7', 
+    url: (id, type) => `https://streamimdb.ru/embed/${type}/${id}` 
   },
 ];
 export default function MoviePlayer({ tmdbId }) {
@@ -121,7 +122,7 @@ export default function MoviePlayer({ tmdbId }) {
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start overflow-y-auto scrollbar-hide bg-[#050505] p-4 md:p-12 font-sans selection:bg-indigo-500/30">
-      <MetaNoReferrer />
+      <MetaNoReferrer referrerPolicy={currentServer.referrerPolicy} />
 
       {/* HEADER SECTION */}
       <div className="w-full max-w-6xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
@@ -205,7 +206,7 @@ export default function MoviePlayer({ tmdbId }) {
             title="Movie Player"
             frameBorder="0"
             allowFullScreen
-            referrerPolicy="no-referrer"
+            referrerPolicy={currentServer.referrerPolicy || "no-referrer"}
             allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
             sandbox={currentServer.noSandbox ? undefined : "allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-presentation allow-popups"}
             className="absolute inset-0 w-full h-full border-0 z-0"
@@ -228,7 +229,7 @@ export default function MoviePlayer({ tmdbId }) {
   );
 }
 
-function MetaNoReferrer() {
+function MetaNoReferrer({ referrerPolicy }) {
   useEffect(() => {
     let meta = document.querySelector('meta[name="referrer"]');
     if (!meta) {
@@ -236,12 +237,12 @@ function MetaNoReferrer() {
       meta.name = 'referrer';
       document.head.appendChild(meta);
     }
-    meta.content = 'no-referrer';
+    meta.content = referrerPolicy || 'no-referrer';
 
     return () => {
       meta.content = 'strict-origin-when-cross-origin';
     };
-  }, []);
+  }, [referrerPolicy]);
 
   return null;
 }

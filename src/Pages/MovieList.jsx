@@ -26,10 +26,10 @@ export default function MovieList({ api_path, forceType }) {
   const [error, setError] = useState(null)
   const [totalPages, setTotalPages] = useState(1)
 
-  // Filters State
-  const [selectedGenre, setSelectedGenre] = useState('')
-  const [selectedLanguage, setSelectedLanguage] = useState('')
-  const [selectedSort, setSelectedSort] = useState('popularity.desc')
+  // Filters State (initialized from sessionStorage if present)
+  const [selectedGenre, setSelectedGenre] = useState(() => sessionStorage.getItem(`movie_list_genre_${mediaType}_${actual_api_path}`) || '')
+  const [selectedLanguage, setSelectedLanguage] = useState(() => sessionStorage.getItem(`movie_list_lang_${mediaType}_${actual_api_path}`) || '')
+  const [selectedSort, setSelectedSort] = useState(() => sessionStorage.getItem(`movie_list_sort_${mediaType}_${actual_api_path}`) || 'popularity.desc')
   const [genres, setGenres] = useState([])
   const [showFilters, setShowFilters] = useState(false)
   const [continueWatching, setContinueWatching] = useState([])
@@ -47,15 +47,45 @@ export default function MovieList({ api_path, forceType }) {
 
   const title = titleMap[api_path] ?? api_path
 
-  // Reset list, page, and filters when category or media type changes
+  // Reset list, page, and load filters from sessionStorage when category or media type changes
   useEffect(() => {
     setMoviesList([])
     setPage(1)
-    setSelectedGenre('')
-    setSelectedLanguage('')
-    setSelectedSort('popularity.desc')
+    
+    const cachedGenre = sessionStorage.getItem(`movie_list_genre_${mediaType}_${actual_api_path}`) || '';
+    const cachedLang = sessionStorage.getItem(`movie_list_lang_${mediaType}_${actual_api_path}`) || '';
+    const cachedSort = sessionStorage.getItem(`movie_list_sort_${mediaType}_${actual_api_path}`) || 'popularity.desc';
+    
+    setSelectedGenre(cachedGenre)
+    setSelectedLanguage(cachedLang)
+    setSelectedSort(cachedSort)
     setShowFilters(false)
   }, [actual_api_path, mediaType])
+
+  // Save filters to sessionStorage when they change
+  useEffect(() => {
+    if (selectedGenre !== '') {
+      sessionStorage.setItem(`movie_list_genre_${mediaType}_${actual_api_path}`, selectedGenre);
+    } else {
+      sessionStorage.removeItem(`movie_list_genre_${mediaType}_${actual_api_path}`);
+    }
+  }, [selectedGenre, mediaType, actual_api_path]);
+
+  useEffect(() => {
+    if (selectedLanguage !== '') {
+      sessionStorage.setItem(`movie_list_lang_${mediaType}_${actual_api_path}`, selectedLanguage);
+    } else {
+      sessionStorage.removeItem(`movie_list_lang_${mediaType}_${actual_api_path}`);
+    }
+  }, [selectedLanguage, mediaType, actual_api_path]);
+
+  useEffect(() => {
+    if (selectedSort !== 'popularity.desc') {
+      sessionStorage.setItem(`movie_list_sort_${mediaType}_${actual_api_path}`, selectedSort);
+    } else {
+      sessionStorage.removeItem(`movie_list_sort_${mediaType}_${actual_api_path}`);
+    }
+  }, [selectedSort, mediaType, actual_api_path]);
 
   // Load Continue Watching from localStorage
   useEffect(() => {
@@ -292,9 +322,7 @@ export default function MovieList({ api_path, forceType }) {
                 <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
               </svg>
               <span>Filters</span>
-              {(selectedGenre !== '' || selectedLanguage !== '' || selectedSort !== 'popularity.desc') && (
-                <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-rose-500 animate-pulse" />
-              )}
+              {(selectedGenre !== '' || selectedLanguage !== '' || selectedSort !== 'popularity.desc')}
             </button>
 
             {/* Dark Mode Toggle Button */}
